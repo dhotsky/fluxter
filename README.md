@@ -609,13 +609,12 @@ dart run :fluxter_create <feature_name> [flags]
 *Flags:*
 - `--stateful` / `--stateless` : Specifies screen widget type (default is stateless).
 - `--controller` / `--no-controller` : Specifies whether to generate a controller (default is true).
-- `--state` / `--no-state` : Specifies whether to generate a custom Freezed state model for the controller.
+- `--state` / `--no-state` : Specifies whether to include a custom Freezed state model inside the controller file.
 
 *Example:* `dart run :fluxter_create profile --stateful --state`
 Generates:
 * `lib/features/profile/presentation/profile_screen.dart` (Stateful ConsumerWidget)
-* `lib/features/profile/presentation/profile_controller.dart` (Riverpod `@riverpod` controller with state)
-* `lib/features/profile/presentation/profile_state.dart` (Freezed state model)
+* `lib/features/profile/presentation/profile_controller.dart` (Riverpod `@riverpod` controller + merged Freezed state)
 
 *(If run without flags, the tool provides an interactive step-by-step prompt menu)*
 

@@ -80,7 +80,6 @@ void main(List<String> args) {
   final controllerFile = File(
     '${presentationDir.path}/${featureName}_controller.dart',
   );
-  final stateFile = File('${presentationDir.path}/${featureName}_state.dart');
 
   if (overrideFeature == null) {
     if (presentationDir.existsSync()) {
@@ -156,9 +155,6 @@ void main(List<String> args) {
 
   if (includeController) {
     if (includeState) {
-      stateFile.writeAsStringSync(
-        _getStateTemplate(featureName, className, genPrefix, targetFeaturePath),
-      );
       controllerFile.writeAsStringSync(
         _getControllerWithStateTemplate(
           featureName,
@@ -187,9 +183,6 @@ void main(List<String> args) {
   print('   - ${screenFile.path}');
   if (includeController) {
     print('   - ${controllerFile.path}');
-    if (includeState) {
-      print('   - ${stateFile.path}');
-    }
   }
   print('\n⚠️  Don\'t forget to:');
   print(
@@ -326,27 +319,6 @@ class ${pascal}Controller extends _\$${pascal}Controller {
 ''';
 }
 
-String _getStateTemplate(
-  String snake,
-  String pascal,
-  String genPrefix,
-  String targetFeaturePath,
-) {
-  return '''import 'package:freezed_annotation/freezed_annotation.dart';
-
-part '${genPrefix}gen/features/$targetFeaturePath/presentation/${snake}_state.freezed.dart';
-
-@freezed
-class ${pascal}State with _\$${pascal}State {
-  const factory ${pascal}State({
-    @Default(false) bool isLoading,
-    String? errorMessage,
-    // TODO: Add more state fields here
-  }) = _${pascal}State;
-}
-''';
-}
-
 String _getControllerWithStateTemplate(
   String snake,
   String pascal,
@@ -355,9 +327,19 @@ String _getControllerWithStateTemplate(
   String targetFeaturePath,
 ) {
   return '''import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '${snake}_state.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part '${genPrefix}gen/features/$targetFeaturePath/presentation/${snake}_controller.g.dart';
+part '${genPrefix}gen/features/$targetFeaturePath/presentation/${snake}_controller.freezed.dart';
+
+@freezed
+abstract class ${pascal}State with _\$${pascal}State {
+  const factory ${pascal}State({
+    @Default(false) bool isLoading,
+    String? errorMessage,
+    // TODO: Add more state fields here
+  }) = _${pascal}State;
+}
 
 @riverpod
 class ${pascal}Controller extends _\$${pascal}Controller {
