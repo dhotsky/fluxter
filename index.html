@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxter — Scalable Flutter Architecture Template</title>
+    <meta name="description"
+        content="A production-ready Flutter Feature-First architecture template with Riverpod, Dio, GoRouter, and Freezed. Install to any Flutter project with a single command.">
+    <meta name="keywords" content="Flutter, Feature-First, architecture, template, Riverpod, Dart, mobile development">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════════════
+           DESIGN TOKENS
+           ═══════════════════════════════════════════════════ */
+        :root {
+            --bg-primary: #06080f;
+            --bg-secondary: #0b0f1a;
+            --bg-card: rgba(15, 20, 40, 0.6);
+            --bg-card-hover: rgba(20, 28, 58, 0.7);
+            --glass-border: rgba(99, 130, 255, 0.12);
+            --glass-border-hover: rgba(99, 130, 255, 0.25);
+            --text-primary: #e8ecf4;
+            --text-secondary: #8892a8;
+            --text-muted: #5a6580;
+            --accent-1: #6c8cff;
+            --accent-2: #38d9f5;
+            --accent-3: #a78bfa;
+            --accent-gradient: linear-gradient(135deg, #6c8cff 0%, #38d9f5 50%, #a78bfa 100%);
+            --glow-blue: rgba(108, 140, 255, 0.15);
+            --glow-cyan: rgba(56, 217, 245, 0.1);
+            --code-bg: rgba(10, 15, 30, 0.8);
+            --code-border: rgba(99, 130, 255, 0.15);
+            --shadow-lg: 0 25px 60px -12px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 40px rgba(108, 140, 255, 0.08);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* ═══════════════════════════════════════════════════
+           RESET & BASE
+           ═══════════════════════════════════════════════════ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: rgba(108, 140, 255, 0.3);
+            color: #fff;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           ANIMATED BACKGROUND
+           ═══════════════════════════════════════════════════ */
+        .bg-effects {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-effects::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(108, 140, 255, 0.06) 0%, transparent 70%);
+            top: -200px;
+            left: -200px;
+            animation: floatOrb 20s ease-in-out infinite;
+        }
+
+        .bg-effects::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(56, 217, 245, 0.04) 0%, transparent 70%);
+            bottom: -100px;
+            right: -100px;
+            animation: floatOrb 25s ease-in-out infinite reverse;
+        }
+
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(99, 130, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 130, 255, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 80%);
+        }
+
+        @keyframes floatOrb {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(80px, 50px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-40px, 80px) scale(0.95);
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════════════ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(6, 8, 15, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(99, 130, 255, 0.06);
+            transition: var(--transition-smooth);
+        }
+
+        nav.scrolled {
+            background: rgba(6, 8, 15, 0.92);
+            border-bottom-color: rgba(99, 130, 255, 0.1);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+        }
+
+        .nav-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.85rem;
+            color: #fff;
+            letter-spacing: -0.03em;
+        }
+
+        .nav-title {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color var(--transition-fast);
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-gradient);
+            border-radius: 1px;
+            transition: width var(--transition-smooth);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.55rem 1.2rem;
+            border-radius: var(--radius-sm);
+            background: rgba(108, 140, 255, 0.1);
+            border: 1px solid rgba(108, 140, 255, 0.2);
+            color: var(--accent-1) !important;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all var(--transition-fast);
+        }
+
+        .nav-cta::after {
+            display: none !important;
+        }
+
+        .nav-cta:hover {
+            background: rgba(108, 140, 255, 0.18) !important;
+            border-color: rgba(108, 140, 255, 0.35);
+            transform: translateY(-1px);
+        }
+
+        /* ═══════════════════════════════════════════════════
+           HERO SECTION
+           ═══════════════════════════════════════════════════ */
+        .hero {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 6rem;
+        }
+
+        .hero-inner {
+            max-width: 1100px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            background: rgba(108, 140, 255, 0.08);
+            border: 1px solid rgba(108, 140, 255, 0.15);
+            width: fit-content;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--accent-1);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-badge .pulse {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4);
+            }
+
+            50% {
+                opacity: 0.8;
+                box-shadow: 0 0 0 6px rgba(74, 222, 128, 0);
+            }
+        }
+
+        h1 {
+            font-size: clamp(2.8rem, 5vw, 4.2rem);
+            font-weight: 900;
+            line-height: 1.08;
+            letter-spacing: -0.04em;
+            animation: fadeInUp 0.8s ease-out 0.1s both;
+        }
+
+        h1 .gradient-text {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            max-width: 480px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 1.8rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(108, 140, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(108, 140, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        /* Hero Terminal */
+        .hero-terminal {
+            position: relative;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .terminal {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            backdrop-filter: blur(20px);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(99, 130, 255, 0.08);
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .terminal-dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .terminal-dots span:nth-child(1) {
+            background: #ff5f57;
+        }
+
+        .terminal-dots span:nth-child(2) {
+            background: #febc2e;
+        }
+
+        .terminal-dots span:nth-child(3) {
+            background: #28c840;
+        }
+
+        .terminal-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .terminal-tabs {
+            display: flex;
+            padding: 0 1.25rem;
+            gap: 0;
+            border-bottom: 1px solid rgba(99, 130, 255, 0.08);
+        }
+
+        .terminal-tab {
+            padding: 0.7rem 1.2rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all var(--transition-fast);
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-family: inherit;
+        }
+
+        .terminal-tab:hover {
+            color: var(--text-secondary);
+        }
+
+        .terminal-tab.active {
+            color: var(--accent-2);
+            border-bottom-color: var(--accent-2);
+        }
+
+        .terminal-body {
+            padding: 1.25rem;
+            padding-right: 6.5rem;
+            min-height: 120px;
+            position: relative;
+        }
+
+        .terminal-code {
+            display: none;
+        }
+
+        .terminal-code.active {
+            display: block;
+        }
+
+        .terminal-code code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #c8d3e6;
+            line-height: 1.7;
+            word-break: break-all;
+        }
+
+        .terminal-code .prompt {
+            color: var(--accent-2);
+            user-select: none;
+        }
+
+        .terminal-code .cmd {
+            color: #e2e8f0;
+        }
+
+        .terminal-code .flag {
+            color: var(--accent-3);
+        }
+
+        .terminal-code .url {
+            color: var(--accent-1);
+        }
+
+        .terminal-code .operator {
+            color: var(--text-muted);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(108, 140, 255, 0.1);
+            border: 1px solid rgba(108, 140, 255, 0.15);
+            color: var(--accent-1);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all var(--transition-fast);
+        }
+
+        .copy-btn:hover {
+            background: rgba(108, 140, 255, 0.2);
+            border-color: rgba(108, 140, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .copy-btn.copied {
+            background: rgba(74, 222, 128, 0.15);
+            border-color: rgba(74, 222, 128, 0.3);
+            color: #4ade80;
+        }
+
+        .copy-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Terminal floating glow */
+        .hero-terminal::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(ellipse, rgba(108, 140, 255, 0.06) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           FEATURES SECTION
+           ═══════════════════════════════════════════════════ */
+        .section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 2rem;
+        }
+
+        .section-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-1);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.8rem;
+            transition: all var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--accent-gradient);
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+
+        .feature-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--glass-border-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+            font-size: 1.3rem;
+            transition: transform var(--transition-spring);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(-3deg);
+        }
+
+        .feature-icon.blue {
+            background: rgba(108, 140, 255, 0.12);
+            border: 1px solid rgba(108, 140, 255, 0.15);
+        }
+
+        .feature-icon.cyan {
+            background: rgba(56, 217, 245, 0.12);
+            border: 1px solid rgba(56, 217, 245, 0.15);
+        }
+
+        .feature-icon.purple {
+            background: rgba(167, 139, 250, 0.12);
+            border: 1px solid rgba(167, 139, 250, 0.15);
+        }
+
+        .feature-icon.green {
+            background: rgba(74, 222, 128, 0.12);
+            border: 1px solid rgba(74, 222, 128, 0.15);
+        }
+
+        .feature-icon.amber {
+            background: rgba(251, 191, 36, 0.12);
+            border: 1px solid rgba(251, 191, 36, 0.15);
+        }
+
+        .feature-icon.rose {
+            background: rgba(251, 113, 133, 0.12);
+            border: 1px solid rgba(251, 113, 133, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .feature-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           ARCHITECTURE SECTION
+           ═══════════════════════════════════════════════════ */
+        .arch-section {
+            background: linear-gradient(180deg, transparent 0%, rgba(108, 140, 255, 0.02) 50%, transparent 100%);
+        }
+
+        .arch-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .arch-visual {
+            position: relative;
+        }
+
+        .arch-diagram {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .arch-layer {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.2rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 0.5rem;
+            transition: all var(--transition-fast);
+        }
+
+        .arch-layer:hover {
+            transform: translateX(4px);
+        }
+
+        .arch-layer:last-child {
+            margin-bottom: 0;
+        }
+
+        .arch-layer.ui {
+            background: rgba(108, 140, 255, 0.08);
+            border: 1px solid rgba(108, 140, 255, 0.12);
+        }
+
+        .arch-layer.data {
+            background: rgba(56, 217, 245, 0.08);
+            border: 1px solid rgba(56, 217, 245, 0.12);
+        }
+
+        .arch-layer.core {
+            background: rgba(167, 139, 250, 0.08);
+            border: 1px solid rgba(167, 139, 250, 0.12);
+        }
+
+        .arch-layer-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .arch-layer-info h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 0.15rem;
+        }
+
+        .arch-layer-info p {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+
+        .arch-connector {
+            display: flex;
+            justify-content: center;
+            padding: 0.3rem 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            opacity: 0.5;
+        }
+
+        .arch-content h2 {
+            font-size: clamp(1.8rem, 3vw, 2.3rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+        }
+
+        .arch-content p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .arch-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .arch-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+        }
+
+        .arch-list li .check {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #4ade80;
+            font-size: 0.7rem;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           TECH STACK SECTION
+           ═══════════════════════════════════════════════════ */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+        }
+
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            text-align: center;
+            transition: all var(--transition-smooth);
+        }
+
+        .tech-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--glass-border-hover);
+            transform: translateY(-3px);
+        }
+
+        .tech-card .tech-emoji {
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .tech-card h4 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .tech-card p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* ═══════════════════════════════════════════════════
+           INSTALL SECTION
+           ═══════════════════════════════════════════════════ */
+        .install-section {
+            background: linear-gradient(180deg, transparent 0%, rgba(108, 140, 255, 0.02) 50%, transparent 100%);
+        }
+
+        .install-card {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .install-card .terminal {
+            box-shadow: var(--shadow-lg), 0 0 80px rgba(108, 140, 255, 0.06);
+        }
+
+        .install-steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .install-step {
+            text-align: center;
+            padding: 1.5rem 1rem;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(108, 140, 255, 0.1);
+            border: 1px solid rgba(108, 140, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--accent-1);
+        }
+
+        .install-step h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .install-step p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           FOOTER
+           ═══════════════════════════════════════════════════ */
+        footer {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid rgba(99, 130, 255, 0.06);
+            padding: 3rem 2rem;
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .footer-brand .nav-logo {
+            width: 28px;
+            height: 28px;
+            font-size: 0.75rem;
+        }
+
+        .footer-brand span {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-copy {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* ═══════════════════════════════════════════════════
+           SCROLL ANIMATIONS
+           ═══════════════════════════════════════════════════ */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ═══════════════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════════════ */
+        @media (max-width: 900px) {
+            .hero-inner {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 3rem;
+            }
+
+            .hero-badge {
+                margin: 0 auto;
+            }
+
+            .hero-description {
+                margin: 0 auto;
+            }
+
+            .hero-actions {
+                justify-content: center;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tech-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .arch-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .install-steps {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero {
+                padding: 7rem 1.2rem 4rem;
+            }
+
+            .section {
+                padding: 4rem 1.2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Effects -->
+    <div class="bg-effects"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="nav-brand">
+            <div class="nav-logo">Fx</div>
+            <span class="nav-title">Fluxter</span>
+        </a>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#architecture">Architecture</a>
+            <a href="#generators">Generators</a>
+            <a href="#stack">Tech Stack</a>
+            <a href="#install">Install</a>
+            <a href="https://github.com/dhotsky/fluxter" target="_blank" class="nav-cta">
+                <svg viewBox="0 0 16 16" fill="currentColor">
+                    <path
+                        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+                </svg>
+                GitHub
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-inner">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="pulse"></span>
+                    Production-Ready Template
+                </div>
+                <h1>
+                    Build Flutter Apps<br>
+                    <span class="gradient-text">The Right Way</span>
+                </h1>
+                <p class="hero-description">
+                    Fluxter is a scalable Feature-First architecture template with Riverpod, Dio, GoRouter, and Freezed.
+                    Install to any Flutter project with a single command.
+                </p>
+                <div class="hero-actions">
+                    <a href="#install" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Get Started
+                    </a>
+                    <a href="https://github.com/dhotsky/fluxter/blob/main/README.md" target="_blank"
+                        class="btn btn-secondary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                        </svg>
+                        Documentation
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-terminal">
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <span class="terminal-title">Terminal</span>
+                        <div style="width: 44px;"></div>
+                    </div>
+                    <div class="terminal-tabs">
+                        <button class="terminal-tab active" onclick="switchTab('mac')">macOS / Linux</button>
+                        <button class="terminal-tab" onclick="switchTab('win')">Windows</button>
+                    </div>
+                    <div class="terminal-body">
+                        <button class="copy-btn" onclick="copyCommand(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                            </svg>
+                            Copy
+                        </button>
+                        <div class="terminal-code active" id="mac-code">
+                            <code><span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-sO</span> <span class="url">https://raw.githubusercontent.com/dhotsky/fluxter/main/install.dart</span> <span class="operator">&&</span> <span class="cmd">dart run</span> install.dart <span class="operator">&&</span> <span class="cmd">rm</span> install.dart</code>
+                        </div>
+                        <div class="terminal-code" id="win-code">
+                            <code><span class="prompt">&gt; </span><span class="cmd">curl.exe</span> <span class="flag">-sO</span> <span class="url">https://raw.githubusercontent.com/dhotsky/fluxter/main/install.dart</span> <span class="operator">;</span> <span class="cmd">dart run</span> install.dart <span class="operator">;</span> <span class="cmd">del</span> install.dart</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-label">✦ Why Fluxter</div>
+                <h2 class="section-title">Everything you need,<br>nothing you don't</h2>
+                <p class="section-subtitle">
+                    A complete architecture foundation with best practices baked in, so you can focus on building
+                    features.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon blue">🏗️</div>
+                    <h3>Feature-First Architecture</h3>
+                    <p>Clean separation of concerns with Screen, Controller, and State pattern powered by Riverpod.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon cyan">🌐</div>
+                    <h3>Network Layer</h3>
+                    <p>Pre-configured Dio + Retrofit with smart token refresh and automatic request queueing.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon purple">🛡️</div>
+                    <h3>Auth Guards</h3>
+                    <p>Declarative routing with GoRouter, built-in auth guards, and automatic force logout handling.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon green">⚡</div>
+                    <h3>Code Generation</h3>
+                    <p>Freezed models, Retrofit clients, and JSON serialization — all with one command.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon amber">🎨</div>
+                    <h3>Theme System</h3>
+                    <p>Consistent dark/light theming with dynamic color resolver, context extensions, and persistent
+                        preference.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon rose">🧩</div>
+                    <h3>Widget Library</h3>
+                    <p>9 production-ready components: multi-variant Button, TextField, Alert, ListView, GridView, Image,
+                        InkWell, Loading Overlay, and Empty State.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon cyan">🌍</div>
+                    <h3>Localization</h3>
+                    <p>Lightweight dual-language system (EN & ID) with <code
+                            style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--accent-2);background:var(--code-bg);padding:0.15rem 0.4rem;border-radius:4px">.tr</code>
+                        extension, parameterized translations, and persistent locale switching.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon purple">🧰</div>
+                    <h3>Extensions Library</h3>
+                    <p>Rich Dart extensions for DateTime formatting, String validation, numeric spacing, Widget layout
+                        wrappers, and BuildContext shortcuts.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Generators Section -->
+    <section class="section" id="generators"
+        style="background:linear-gradient(180deg,transparent 0%,rgba(56,217,245,0.02) 50%,transparent 100%)">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-label">✦ CLI Generators</div>
+                <h2 class="section-title">Scaffold in seconds</h2>
+                <p class="section-subtitle">
+                    Built-in CLI tools to generate features, models, repositories, and translations — zero boilerplate,
+                    maximum speed.
+                </p>
+            </div>
+
+            <div class="features-grid" style="grid-template-columns:repeat(auto-fit, minmax(280px, 1fr))">
+                <div class="feature-card reveal">
+                    <div class="feature-icon cyan">🚀</div>
+                    <h3>Feature Generator</h3>
+                    <p style="margin-bottom:1rem">Scaffold a complete feature with Screen + Controller in one command.
+                    </p>
+                    <code
+                        style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--accent-2);background:var(--code-bg);padding:0.5rem 0.8rem;border-radius:var(--radius-sm);border:1px solid var(--code-border);display:block">dart run :fluxter_create profile</code>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon purple">❄️</div>
+                    <h3>Model Generator</h3>
+                    <p style="margin-bottom:1rem">Generate Freezed models from JSON — paste and go. Supports feature
+                        targeting.</p>
+                    <code
+                        style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--accent-3);background:var(--code-bg);padding:0.5rem 0.8rem;border-radius:var(--radius-sm);border:1px solid var(--code-border);display:block">dart run :fluxter_model user --profile</code>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon blue">📦</div>
+                    <h3>Repository Generator</h3>
+                    <p style="margin-bottom:1rem">Generate repository classes with optional ApiService and LocalStorage
+                        flags.</p>
+                    <code
+                        style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--accent-1);background:var(--code-bg);padding:0.5rem 0.8rem;border-radius:var(--radius-sm);border:1px solid var(--code-border);display:block">dart run :fluxter_repository payment --api-service --local-storage</code>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon rose">🌐</div>
+                    <h3>Translation Generator</h3>
+                    <p style="margin-bottom:1rem">Add translation keys dynamically into localization files via
+                        interactive guide.</p>
+                    <code
+                        style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--accent-3);background:var(--code-bg);padding:0.5rem 0.8rem;border-radius:var(--radius-sm);border:1px solid var(--code-border);display:block">dart run :fluxter_translate</code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="section arch-section" id="architecture">
+        <div class="section-inner">
+            <div class="arch-grid">
+                <div class="arch-visual reveal">
+                    <div class="arch-diagram">
+                        <div class="arch-layer ui">
+                            <span class="arch-layer-icon">🖥️</span>
+                            <div class="arch-layer-info">
+                                <h4>UI Layer</h4>
+                                <p>Screen + Controller + State</p>
+                            </div>
+                        </div>
+                        <div class="arch-connector">↕</div>
+                        <div class="arch-layer data">
+                            <span class="arch-layer-icon">📦</span>
+                            <div class="arch-layer-info">
+                                <h4>Data Layer</h4>
+                                <p>Repository + Models + Providers</p>
+                            </div>
+                        </div>
+                        <div class="arch-connector">↕</div>
+                        <div class="arch-layer core">
+                            <span class="arch-layer-icon">⚙️</span>
+                            <div class="arch-layer-info">
+                                <h4>Core Layer</h4>
+                                <p>ApiClient, ApiResult, LocalStorage</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="arch-content reveal">
+                    <div class="section-label">✦ Architecture</div>
+                    <h2>Clean, layered<br><span class="gradient-text">and scalable</span></h2>
+                    <p>
+                        Fluxter follows Clean Architecture principles with Feature-First + Repository pattern,
+                        ensuring your codebase stays maintainable as it grows.
+                    </p>
+                    <ul class="arch-list">
+                        <li><span class="check">✓</span> Clear separation of concerns</li>
+                        <li><span class="check">✓</span> Dependency injection via Riverpod</li>
+                        <li><span class="check">✓</span> Type-safe API results with sealed classes</li>
+                        <li><span class="check">✓</span> Smart token management with auto-refresh</li>
+                        <li><span class="check">✓</span> Rapid UI generation with zero boilerplate</li>
+                        <li><span class="check">✓</span> Built-in localization with .tr extensions</li>
+                        <li><span class="check">✓</span> Rich extension library to reduce boilerplate</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section class="section" id="stack">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-label">✦ Tech Stack</div>
+                <h2 class="section-title">Built on the best</h2>
+                <p class="section-subtitle">
+                    Industry-standard libraries carefully integrated to work together seamlessly.
+                </p>
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card reveal">
+                    <span class="tech-emoji">📱</span>
+                    <h4>Riverpod</h4>
+                    <p>State Management</p>
+                </div>
+                <div class="tech-card reveal">
+                    <span class="tech-emoji">🧭</span>
+                    <h4>GoRouter</h4>
+                    <p>Navigation</p>
+                </div>
+                <div class="tech-card reveal">
+                    <span class="tech-emoji">🌐</span>
+                    <h4>Dio + Retrofit</h4>
+                    <p>HTTP & API Client</p>
+                </div>
+                <div class="tech-card reveal">
+                    <span class="tech-emoji">❄️</span>
+                    <h4>Freezed</h4>
+                    <p>Immutable Models</p>
+                </div>
+                <div class="tech-card reveal">
+                    <span class="tech-emoji">💾</span>
+                    <h4>SharedPrefs</h4>
+                    <p>Local Storage</p>
+                </div>
+                <div class="tech-card reveal">
+                    <span class="tech-emoji">🔧</span>
+                    <h4>BuildRunner</h4>
+                    <p>Code Generation</p>
+                </div>
+                <div class="tech-card reveal">
+                    <span class="tech-emoji">📐</span>
+                    <h4>JSON Serializable</h4>
+                    <p>Serialization</p>
+                </div>
+                <div class="tech-card reveal">
+                    <span class="tech-emoji">📅</span>
+                    <h4>intl</h4>
+                    <p>Date Formatting</p>
+                </div>
+                <div class="tech-card reveal">
+                    <span class="tech-emoji">🔍</span>
+                    <h4>Dio Interceptor</h4>
+                    <p>Network Logging</p>
+                </div>
+                <div class="tech-card reveal">
+                    <span class="tech-emoji">🎯</span>
+                    <h4>Flutter 3.38+</h4>
+                    <p>Framework</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Install Section -->
+    <section class="section install-section" id="install">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-label">✦ Quick Start</div>
+                <h2 class="section-title">Up and running<br>in seconds</h2>
+                <p class="section-subtitle">
+                    One command installs the entire architecture into your existing Flutter project.
+                </p>
+            </div>
+
+            <div class="install-card reveal">
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <span class="terminal-title">Installation</span>
+                        <div style="width: 44px;"></div>
+                    </div>
+                    <div class="terminal-tabs">
+                        <button class="terminal-tab active" onclick="switchInstallTab('mac')">macOS / Linux</button>
+                        <button class="terminal-tab" onclick="switchInstallTab('win')">Windows</button>
+                    </div>
+                    <div class="terminal-body">
+                        <button class="copy-btn" onclick="copyInstallCommand(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                            </svg>
+                            Copy
+                        </button>
+                        <div class="terminal-code active" id="install-mac-code">
+                            <code><span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-sO</span> <span class="url">https://raw.githubusercontent.com/dhotsky/fluxter/main/install.dart</span> <span class="operator">&&</span> <span class="cmd">dart run</span> install.dart <span class="operator">&&</span> <span class="cmd">rm</span> install.dart</code>
+                        </div>
+                        <div class="terminal-code" id="install-win-code">
+                            <code><span class="prompt">&gt; </span><span class="cmd">curl.exe</span> <span class="flag">-sO</span> <span class="url">https://raw.githubusercontent.com/dhotsky/fluxter/main/install.dart</span> <span class="operator">;</span> <span class="cmd">dart run</span> install.dart <span class="operator">;</span> <span class="cmd">del</span> install.dart</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="install-steps reveal">
+                <div class="install-step">
+                    <div class="step-number">1</div>
+                    <h4>Run the command</h4>
+                    <p>Execute the one-liner in your Flutter project's root directory.</p>
+                </div>
+                <div class="install-step">
+                    <div class="step-number">2</div>
+                    <h4>Interactive Setup</h4>
+                    <p>Configure localization options (EN/ID dual language), merge dependencies, and rename packages.
+                    </p>
+                </div>
+                <div class="install-step">
+                    <div class="step-number">3</div>
+                    <h4>Start building</h4>
+                    <p>Generate features, models, repositories, and translation keys with rapid CLI generators.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="nav-logo">Fx</div>
+                <span>Fluxter</span>
+            </div>
+            <div class="footer-links">
+                <a href="https://github.com/dhotsky/fluxter" target="_blank">GitHub</a>
+                <a href="https://github.com/dhotsky/fluxter/blob/main/README.md" target="_blank">Docs</a>
+                <a href="https://github.com/dhotsky/fluxter/blob/main/LICENSE" target="_blank">License</a>
+            </div>
+            <span class="footer-copy">Built with ❤️ for Flutter developers</span>
+        </div>
+    </footer>
+
+    <script>
+        // ── Tab Switching (Hero Terminal) ──
+        let activeHeroTab = 'mac';
+        function switchTab(tab) {
+            activeHeroTab = tab;
+            const tabs = document.querySelectorAll('.hero-terminal .terminal-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.hero-terminal .terminal-code').forEach(c => c.classList.remove('active'));
+
+            if (tab === 'mac') {
+                tabs[0].classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+            }
+            document.getElementById(tab === 'mac' ? 'mac-code' : 'win-code').classList.add('active');
+        }
+
+        // ── Tab Switching (Install Terminal) ──
+        let activeInstallTab = 'mac';
+        function switchInstallTab(tab) {
+            activeInstallTab = tab;
+            const tabs = document.querySelectorAll('.install-card .terminal-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.install-card .terminal-code').forEach(c => c.classList.remove('active'));
+
+            if (tab === 'mac') {
+                tabs[0].classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+            }
+            document.getElementById(tab === 'mac' ? 'install-mac-code' : 'install-win-code').classList.add('active');
+        }
+
+        // ── Auto OS Detection on Load ──
+        window.addEventListener('DOMContentLoaded', () => {
+            const platform = (window.navigator.userAgentData?.platform || window.navigator.platform || '').toLowerCase();
+            const userAgent = window.navigator.userAgent.toLowerCase();
+            const isWindows = platform.includes('win') || userAgent.includes('win');
+
+            if (isWindows) {
+                switchTab('win');
+                switchInstallTab('win');
+            } else {
+                switchTab('mac');
+                switchInstallTab('mac');
+            }
+        });
+
+        // ── Copy Commands ──
+        function getCleanText(codeEl) {
+            let text = codeEl.innerText;
+            if (text.startsWith('$ ')) text = text.substring(2);
+            else if (text.startsWith('> ')) text = text.substring(2);
+            else if (text.startsWith('$') || text.startsWith('>')) text = text.substring(1);
+            return text.trim();
+        }
+
+        function animateCopyBtn(btn) {
+            btn.classList.add('copied');
+            btn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Copied!
+            `;
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    Copy
+                `;
+            }, 2000);
+        }
+
+        function copyCommand(btn) {
+            const codeEl = document.getElementById(activeHeroTab === 'mac' ? 'mac-code' : 'win-code');
+            navigator.clipboard.writeText(getCleanText(codeEl));
+            animateCopyBtn(btn);
+        }
+
+        function copyInstallCommand(btn) {
+            const codeEl = document.getElementById(activeInstallTab === 'mac' ? 'install-mac-code' : 'install-win-code');
+            navigator.clipboard.writeText(getCleanText(codeEl));
+            animateCopyBtn(btn);
+        }
+
+        // ── Navbar Scroll Effect ──
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // ── Scroll Reveal Animations ──
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    // Stagger animation for grid children
+                    const parent = entry.target.parentElement;
+                    if (parent && (parent.classList.contains('features-grid') || parent.classList.contains('tech-grid'))) {
+                        const siblings = [...parent.querySelectorAll('.reveal')];
+                        const index = siblings.indexOf(entry.target);
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 80);
+                    } else {
+                        entry.target.classList.add('visible');
+                    }
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -40px 0px'
+        });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // ── Smooth Scroll for Anchor Links ──
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
