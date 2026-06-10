@@ -129,12 +129,17 @@ String _getRepositoryTemplate(
 
   // Imports
   buffer.writeln("import 'package:flutter_riverpod/flutter_riverpod.dart';");
+  buffer.writeln("import 'package:riverpod_annotation/riverpod_annotation.dart';");
   if (apiService) {
     buffer.writeln("import 'package:$projectName/core/network/api_service.dart';");
   }
   if (localStorage) {
     buffer.writeln("import 'package:$projectName/core/storage/local_storage.dart';");
   }
+  buffer.writeln();
+
+  // Part directive
+  buffer.writeln("part '${snake}_repository.g.dart';");
   buffer.writeln();
 
   // Class Definition
@@ -164,8 +169,9 @@ String _getRepositoryTemplate(
   buffer.writeln("}");
   buffer.writeln();
 
-  // Provider
-  buffer.writeln("final ${camel}Provider = Provider<$pascal>((ref) {");
+  // Provider (function-style with @riverpod)
+  buffer.writeln("@riverpod");
+  buffer.writeln("$pascal $camel(Ref ref) {");
   if (apiService) {
     buffer.writeln("  final apiService = ref.watch(apiServiceProvider);");
   }
@@ -179,10 +185,11 @@ String _getRepositoryTemplate(
   if (localStorage) callArgs.add("localStorage");
   buffer.write(callArgs.join(', '));
   buffer.writeln(");");
-  buffer.writeln("});");
+  buffer.writeln("}");
 
   return buffer.toString();
 }
+
 
 String? _getProjectName() {
   final pubspecFile = File('pubspec.yaml');

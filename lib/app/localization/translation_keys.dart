@@ -13,6 +13,11 @@ abstract class TranslationKeys {
   static const logoutConfirmTitle = 'logoutConfirmTitle';
   static const logoutConfirmMessage = 'logoutConfirmMessage';
   static const cancel = 'cancel';
+  static const understand = 'understand';
+  static const yes = 'yes';
+  static const noDataFound = 'noDataFound';
+  static const noDataMessage = 'noDataMessage';
+  static const processing = 'processing';
 
   // Network Error Messages
   static const errTimeout = 'errTimeout';

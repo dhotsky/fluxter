@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:fluxter/core/storage/local_storage.dart';
 
-class ThemeModeNotifier extends Notifier<ThemeMode> {
+part '../../../gen/app/utils/helpers/theme_helper.g.dart';
+
+@Riverpod(keepAlive: true)
+class ThemeModeNotifier extends _$ThemeModeNotifier {
   @override
   ThemeMode build() {
     final localStorage = ref.watch(localStorageProvider);
@@ -16,7 +19,3 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
     state = isDark ? ThemeMode.light : ThemeMode.dark;
   }
 }
-
-final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(
-  () => ThemeModeNotifier(),
-);

@@ -1,9 +1,11 @@
 import 'dart:convert';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fluxter/features/auth/domain/token.dart';
 import 'package:fluxter/features/auth/domain/user.dart';
+
+part '../../gen/core/storage/local_storage.g.dart';
 
 class LocalStorage {
   static late final LocalStorage _instance;
@@ -69,6 +71,5 @@ class LocalStorage {
   }
 }
 
-final localStorageProvider = Provider<LocalStorage>(
-  (ref) => LocalStorage.instance,
-);
+@Riverpod(keepAlive: true)
+LocalStorage localStorage(Ref ref) => LocalStorage.instance;

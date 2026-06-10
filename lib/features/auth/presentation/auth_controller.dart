@@ -1,10 +1,13 @@
 import 'dart:async';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:fluxter/core/network/api_result.dart';
 import 'package:fluxter/features/auth/data/auth_repository.dart';
 import 'package:fluxter/features/auth/domain/user.dart';
 
-class AuthController extends AsyncNotifier<User?> {
+part '../../../gen/features/auth/presentation/auth_controller.g.dart';
+
+@riverpod
+class AuthController extends _$AuthController {
   @override
   FutureOr<User?> build() {
     final repository = ref.watch(authRepositoryProvider);
@@ -34,7 +37,3 @@ class AuthController extends AsyncNotifier<User?> {
     state = const AsyncData(null);
   }
 }
-
-final authControllerProvider = AsyncNotifierProvider<AuthController, User?>(
-  () => AuthController(),
-);

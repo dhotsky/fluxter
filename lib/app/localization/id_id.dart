@@ -15,6 +15,11 @@ final Map<String, String> idId = {
   TranslationKeys.logoutConfirmTitle: 'Keluar',
   TranslationKeys.logoutConfirmMessage: 'Apakah Anda yakin ingin keluar?',
   TranslationKeys.cancel: 'Batal',
+  TranslationKeys.understand: 'Mengerti',
+  TranslationKeys.yes: 'Ya',
+  TranslationKeys.noDataFound: 'Data Tidak Ditemukan',
+  TranslationKeys.noDataMessage: 'Belum ada data untuk ditampilkan saat ini.',
+  TranslationKeys.processing: 'Sedang memproses...',
 
   // Network Error Messages
   TranslationKeys.errTimeout: 'Koneksi berakhir. Silakan coba lagi.',

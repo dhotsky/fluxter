@@ -1,10 +1,12 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:fluxter/core/network/api_manager.dart';
 import 'package:fluxter/core/network/api_service.dart';
 import 'package:fluxter/core/network/api_result.dart';
 import 'package:fluxter/core/storage/local_storage.dart';
 import 'package:fluxter/features/auth/domain/user.dart';
 import 'package:fluxter/features/auth/domain/token.dart';
+
+part '../../../gen/features/auth/data/auth_repository.g.dart';
 
 class AuthRepository {
   final ApiService _apiService;
@@ -55,8 +57,9 @@ class AuthRepository {
   bool get isLoggedIn => _localStorage.isLoggedIn;
 }
 
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
+@riverpod
+AuthRepository authRepository(Ref ref) {
   final apiService = ref.watch(apiServiceProvider);
   final localStorage = ref.watch(localStorageProvider);
   return AuthRepository(apiService, localStorage);
-});
+}

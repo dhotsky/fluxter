@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:fluxter/app/theme/app_color.dart';
 import 'package:fluxter/app/utils/extensions/extensions.dart';
+import 'package:fluxter/app/localization/translation_keys.dart';
+import 'package:fluxter/app/localization/app_translations.dart';
 
 /// Loading component for use inside the UI (like ListView, etc)
 class AppLoading extends StatelessWidget {
@@ -56,8 +58,9 @@ class AppLoadingOverlay {
   /// Use [hide] after the async process is finished to close it.
   static void showAsDialog(
     BuildContext context, {
-    String text = 'Processing...',
+    String? text,
   }) {
+    final displayText = text ?? TranslationKeys.processing.tr;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -76,7 +79,7 @@ class AppLoadingOverlay {
                 const AppLoading(size: 32, strokeWidth: 3),
                 16.height,
                 Text(
-                  text,
+                  displayText,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
@@ -96,8 +99,9 @@ class AppLoadingOverlay {
   /// Use [hide] after the async process is finished to close it.
   static void showAsBottomSheet(
     BuildContext context, {
-    String text = 'Processing...',
+    String? text,
   }) {
+    final displayText = text ?? TranslationKeys.processing.tr;
     showModalBottomSheet(
       context: context,
       isDismissible: false,
@@ -117,7 +121,7 @@ class AppLoadingOverlay {
                 const AppLoading(size: 32, strokeWidth: 3),
                 16.height,
                 Text(
-                  text,
+                  displayText,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,

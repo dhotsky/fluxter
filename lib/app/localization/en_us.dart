@@ -15,6 +15,11 @@ final Map<String, String> enUs = {
   TranslationKeys.logoutConfirmTitle: 'Log Out',
   TranslationKeys.logoutConfirmMessage: 'Are you sure you want to log out?',
   TranslationKeys.cancel: 'Cancel',
+  TranslationKeys.understand: 'Understand',
+  TranslationKeys.yes: 'Yes',
+  TranslationKeys.noDataFound: 'Data Not Found',
+  TranslationKeys.noDataMessage: 'There is no data to display at the moment.',
+  TranslationKeys.processing: 'Processing...',
 
   // Network Error Messages
   TranslationKeys.errTimeout: 'Connection timed out. Please try again.',

@@ -38,7 +38,7 @@
 Fluxter is an **architecture template** designed to provide a robust and clean foundation for enterprise Flutter projects. Centered around **Clean Architecture** principles and a modular **Feature-First** structure, Fluxter provides:
 
 - ✅ Clear Separation of Concerns (Presentation, Domain, Data, Core, App)
-- ✅ Modern state management via manual **Riverpod 2.x Notifier & AsyncNotifier**
+- ✅ Modern state management via **Riverpod 3.x with `@riverpod` Auto-Generated Providers**
 - ✅ Type-safe network layer (**Dio + Retrofit**)
 - ✅ Smart token refresh with automatic queueing
 - ✅ Automatic reactive redirection on session expiry
@@ -150,11 +150,11 @@ lib/
 
 | Category            | Library                           | Version   | Function                           |
 |---------------------|-----------------------------------|-----------|------------------------------------|
-| State Management    | `flutter_riverpod`                | ^2.5.1    | State management & DI              |
-| Routing             | `go_router`                       | ^14.2.0   | Declarative routing                |
-| Network (HTTP)      | `dio`                             | ^5.7.0    | HTTP client                        |
-| REST API client     | `retrofit`                        | ^4.4.1    | Retrofit type-safe annotations     |
-| Local Storage       | `shared_preferences`              | ^2.5.3    | Persistent preferences storage     |
+| State Management    | `flutter_riverpod` + `annotation` | ^3.3.2    | State management & DI (code-gen)   |
+| Routing             | `go_router`                       | ^17.3.0   | Declarative routing                |
+| Network (HTTP)      | `dio`                             | ^5.9.2    | HTTP client                        |
+| REST API client     | `retrofit`                        | ^4.9.2    | Retrofit type-safe annotations     |
+| Local Storage       | `shared_preferences`              | ^2.5.5    | Persistent preferences storage     |
 | Data Modeling       | `freezed` + `freezed_annotation`  | ^3.x      | Type-safe immutable classes        |
 | Serialization       | `json_serializable`               | ^6.14.0   | JSON serialization/de-serialization|
 | Date Formatting     | `intl`                            | ^0.20.2   | Internationalized date/number formatting |
@@ -227,16 +227,21 @@ abstract class User with _$User {
 Handles operations by pulling remote data and syncing with local storage.
 Example: `lib/features/auth/data/auth_repository.dart`
 ```dart
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return AuthRepository(ref.watch(apiServiceProvider), ref.watch(localStorageProvider));
-});
+@riverpod
+AuthRepository authRepository(Ref ref) {
+  return AuthRepository(
+    ref.watch(apiServiceProvider),
+    ref.watch(localStorageProvider),
+  );
+}
 ```
 
 ### 3. Presentation (Screens & Controllers)
-State is managed by a `Controller` inheriting `Notifier` or `AsyncNotifier`.
+State is managed by a `Controller` inheriting the auto-generated notifier base class.
 Example: `lib/features/auth/presentation/auth_controller.dart`
 ```dart
-class AuthController extends AsyncNotifier<User?> {
+@riverpod
+class AuthController extends _$AuthController {
   @override
   FutureOr<User?> build() {
     return ref.watch(authRepositoryProvider).currentUser;
@@ -599,12 +604,20 @@ Fluxter provides fast code-generation scripts to accelerate feature creation:
 ### 1. Generate Feature
 Run the command below to generate feature folders and populated template files under `lib/features/`:
 ```bash
-dart run :fluxter_create <feature_name>
+dart run :fluxter_create <feature_name> [flags]
 ```
-*Example:* `dart run :fluxter_create profile`
+*Flags:*
+- `--stateful` / `--stateless` : Specifies screen widget type (default is stateless).
+- `--controller` / `--no-controller` : Specifies whether to generate a controller (default is true).
+- `--state` / `--no-state` : Specifies whether to generate a custom Freezed state model for the controller.
+
+*Example:* `dart run :fluxter_create profile --stateful --state`
 Generates:
-* `lib/features/profile/presentation/profile_screen.dart` (Riverpod `ConsumerWidget`)
-* `lib/features/profile/presentation/profile_controller.dart` (Riverpod `Notifier`)
+* `lib/features/profile/presentation/profile_screen.dart` (Stateful ConsumerWidget)
+* `lib/features/profile/presentation/profile_controller.dart` (Riverpod `@riverpod` controller with state)
+* `lib/features/profile/presentation/profile_state.dart` (Freezed state model)
+
+*(If run without flags, the tool provides an interactive step-by-step prompt menu)*
 
 
 ### 2. Generate Model from JSON

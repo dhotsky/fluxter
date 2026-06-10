@@ -714,9 +714,9 @@ void _stripLocalization(String projectName) {
     appFile.writeAsStringSync(content);
   }
 
-  // 2. Modify lib/features/auth/presentation/screens/login_screen.dart
+  // 2. Modify lib/features/auth/presentation/login_screen.dart
   final loginFile = File(
-    'lib/features/auth/presentation/screens/login_screen.dart',
+    'lib/features/auth/presentation/login_screen.dart',
   );
   if (loginFile.existsSync()) {
     var content = loginFile.readAsStringSync().replaceAll('\r\n', '\n');
@@ -769,9 +769,9 @@ void _stripLocalization(String projectName) {
     loginFile.writeAsStringSync(content);
   }
 
-  // 3. Modify lib/features/home/presentation/screens/home_screen.dart
+  // 3. Modify lib/features/home/presentation/home_screen.dart
   final homeFile = File(
-    'lib/features/home/presentation/screens/home_screen.dart',
+    'lib/features/home/presentation/home_screen.dart',
   );
   if (homeFile.existsSync()) {
     var content = homeFile.readAsStringSync().replaceAll('\r\n', '\n');
@@ -886,9 +886,9 @@ void _stripDarkMode(String projectName) {
     appFile.writeAsStringSync(content);
   }
 
-  // 2. Modify lib/features/home/presentation/screens/home_screen.dart
+  // 2. Modify lib/features/home/presentation/home_screen.dart
   final homeFile = File(
-    'lib/features/home/presentation/screens/home_screen.dart',
+    'lib/features/home/presentation/home_screen.dart',
   );
   if (homeFile.existsSync()) {
     var content = homeFile.readAsStringSync().replaceAll('\r\n', '\n');

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:fluxter/app/theme/app_color.dart';
 import 'package:fluxter/app/utils/extensions/extensions.dart';
+import 'package:fluxter/app/localization/translation_keys.dart';
+import 'package:fluxter/app/localization/app_translations.dart';
 
 import 'package:fluxter/app/widgets/app_button.dart';
 
@@ -17,9 +19,10 @@ class AppAlert {
     required BuildContext context,
     required String title,
     required String message,
-    String buttonText = 'Mengerti',
+    String? buttonText,
     VoidCallback? onPressed,
   }) async {
+    final displayButtonText = buttonText ?? TranslationKeys.understand.tr;
     return showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -28,7 +31,7 @@ class AppAlert {
         content: Text(message),
         actions: [
           AppButton(
-            text: buttonText,
+            text: displayButtonText,
             onPressed: () {
               Navigator.of(context).pop();
               onPressed?.call();
@@ -44,9 +47,10 @@ class AppAlert {
     required BuildContext context,
     required String title,
     required String message,
-    String buttonText = 'Mengerti',
+    String? buttonText,
     VoidCallback? onPressed,
   }) async {
+    final displayButtonText = buttonText ?? TranslationKeys.understand.tr;
     return showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -78,7 +82,7 @@ class AppAlert {
                 ),
                 24.height,
                 AppButton(
-                  text: buttonText,
+                  text: displayButtonText,
                   onPressed: () {
                     Navigator.of(context).pop();
                     onPressed?.call();
@@ -100,10 +104,12 @@ class AppAlert {
     required BuildContext context,
     required String title,
     required String message,
-    String confirmText = 'Ya',
-    String cancelText = 'Batal',
+    String? confirmText,
+    String? cancelText,
     bool isDanger = false,
   }) async {
+    final displayConfirmText = confirmText ?? TranslationKeys.yes.tr;
+    final displayCancelText = cancelText ?? TranslationKeys.cancel.tr;
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -115,7 +121,7 @@ class AppAlert {
             children: [
               Expanded(
                 child: AppButton.text(
-                  text: cancelText,
+                  text: displayCancelText,
                   onPressed: () => Navigator.of(context).pop(false),
                 ),
               ),
@@ -123,11 +129,11 @@ class AppAlert {
               Expanded(
                 child: isDanger
                     ? AppButton.danger(
-                        text: confirmText,
+                        text: displayConfirmText,
                         onPressed: () => Navigator.of(context).pop(true),
                       )
                     : AppButton(
-                        text: confirmText,
+                        text: displayConfirmText,
                         onPressed: () => Navigator.of(context).pop(true),
                       ),
               ),
@@ -144,10 +150,12 @@ class AppAlert {
     required BuildContext context,
     required String title,
     required String message,
-    String confirmText = 'Ya',
-    String cancelText = 'Batal',
+    String? confirmText,
+    String? cancelText,
     bool isDanger = false,
   }) async {
+    final displayConfirmText = confirmText ?? TranslationKeys.yes.tr;
+    final displayCancelText = cancelText ?? TranslationKeys.cancel.tr;
     return showModalBottomSheet<bool>(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -182,7 +190,7 @@ class AppAlert {
                   children: [
                     Expanded(
                       child: AppButton.outlined(
-                        text: cancelText,
+                        text: displayCancelText,
                         onPressed: () => Navigator.of(context).pop(false),
                       ),
                     ),
@@ -190,11 +198,11 @@ class AppAlert {
                     Expanded(
                       child: isDanger
                           ? AppButton.danger(
-                              text: confirmText,
+                              text: displayConfirmText,
                               onPressed: () => Navigator.of(context).pop(true),
                             )
                           : AppButton(
-                              text: confirmText,
+                              text: displayConfirmText,
                               onPressed: () => Navigator.of(context).pop(true),
                             ),
                     ),

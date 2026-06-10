@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:awesome_dio_interceptor/awesome_dio_interceptor.dart';
 
 import 'package:fluxter/app/config/app_config.dart';
@@ -37,7 +37,8 @@ abstract class ApiService {
   Future<ApiResponse<User>> getProfile();
 }
 
-final dioProvider = Provider<Dio>((ref) {
+@Riverpod(keepAlive: true)
+Dio dio(Ref ref) {
   final dio = Dio(
     BaseOptions(
       baseUrl: AppConfig.baseUrl,
@@ -61,9 +62,10 @@ final dioProvider = Provider<Dio>((ref) {
   ]);
 
   return dio;
-});
+}
 
-final apiServiceProvider = Provider<ApiService>((ref) {
-  final dio = ref.watch(dioProvider);
-  return ApiService(dio);
-});
+@Riverpod(keepAlive: true)
+ApiService apiService(Ref ref) {
+  final d = ref.watch(dioProvider);
+  return ApiService(d);
+}

@@ -2,26 +2,31 @@ import 'package:flutter/material.dart';
 
 import 'package:fluxter/app/theme/app_color.dart';
 import 'package:fluxter/app/utils/extensions/extensions.dart';
+import 'package:fluxter/app/localization/translation_keys.dart';
+import 'package:fluxter/app/localization/app_translations.dart';
 
 /// Reusable Empty State Widget.
 ///
 /// Can be used in ListViews or any place where data is empty.
 class AppEmpty extends StatelessWidget {
-  final String title;
-  final String message;
+  final String? title;
+  final String? message;
   final IconData icon;
   final Widget? action;
 
   const AppEmpty({
     super.key,
-    this.title = 'Data Tidak Ditemukan',
-    this.message = 'Belum ada data untuk ditampilkan saat ini.',
+    this.title,
+    this.message,
     this.icon = Icons.inbox_outlined,
     this.action,
   });
 
   @override
   Widget build(BuildContext context) {
+    final displayTitle = title ?? TranslationKeys.noDataFound.tr;
+    final displayMessage = message ?? TranslationKeys.noDataMessage.tr;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
@@ -36,7 +41,7 @@ class AppEmpty extends StatelessWidget {
         ),
         24.height,
         Text(
-          title,
+          displayTitle,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 18,
@@ -46,7 +51,7 @@ class AppEmpty extends StatelessWidget {
         ),
         8.height,
         Text(
-          message,
+          displayMessage,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: context.textSecondary),
         ),

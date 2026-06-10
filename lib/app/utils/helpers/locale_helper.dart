@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:fluxter/core/storage/local_storage.dart';
 import 'package:fluxter/app/localization/app_translations.dart';
 
-class LocaleNotifier extends Notifier<Locale> {
+part '../../../gen/app/utils/helpers/locale_helper.g.dart';
+
+@Riverpod(keepAlive: true)
+class LocaleNotifier extends _$LocaleNotifier {
   @override
   Locale build() {
     final localStorage = ref.watch(localStorageProvider);
@@ -25,7 +28,3 @@ class LocaleNotifier extends Notifier<Locale> {
     state = locale;
   }
 }
-
-final localeProvider = NotifierProvider<LocaleNotifier, Locale>(
-  () => LocaleNotifier(),
-);

@@ -6,6 +6,8 @@ void main(List<String> args) {
   String? overrideFeature;
   String? rawInput;
   bool? isStateful;
+  bool? includeController;
+  bool? includeState;
 
   for (final arg in args) {
     if (arg.startsWith('--') && arg.length > 2) {
@@ -14,6 +16,15 @@ void main(List<String> args) {
         isStateful = true;
       } else if (val == 'stateless' || val == 'widget') {
         isStateful = false;
+      } else if (val == 'controller') {
+        includeController = true;
+      } else if (val == 'no-controller') {
+        includeController = false;
+      } else if (val == 'state') {
+        includeState = true;
+        includeController = true;
+      } else if (val == 'no-state') {
+        includeState = false;
       } else {
         overrideFeature = val;
       }
@@ -34,10 +45,14 @@ void main(List<String> args) {
     print(
       '  dart run fluxter_create <name> --stateful / --stateless  → specifies screen widget type',
     );
+    print('  dart run fluxter_create <name> --controller / --no-controller');
+    print(
+      '  dart run fluxter_create <name> --state / --no-state      → generate controller with custom Freezed state',
+    );
     print('');
     print('Examples:');
     print('  dart run fluxter_create profile');
-    print('  dart run fluxter_create detail --home --stateful');
+    print('  dart run fluxter_create detail --home --stateful --state');
     exit(1);
   }
 
@@ -65,6 +80,7 @@ void main(List<String> args) {
   final controllerFile = File(
     '${presentationDir.path}/${featureName}_controller.dart',
   );
+  final stateFile = File('${presentationDir.path}/${featureName}_state.dart');
 
   if (overrideFeature == null) {
     if (presentationDir.existsSync()) {
@@ -96,24 +112,94 @@ void main(List<String> args) {
     print('');
   }
 
+  if (includeController == null) {
+    print('Choose controller type:');
+    print('  1. Simple Controller (without state model) [Default]');
+    print('  2. Controller with Freezed State model (ProductState style)');
+    print('  3. No controller');
+    stdout.write('👉 Enter choice (1, 2, or 3, default is 1): ');
+    final choice = stdin.readLineSync()?.trim();
+    if (choice == '2') {
+      includeController = true;
+      includeState = true;
+    } else if (choice == '3') {
+      includeController = false;
+      includeState = false;
+    } else {
+      includeController = true;
+      includeState = false;
+    }
+    print('');
+  }
+
+  if (includeController == false && includeState == true) {
+    print('⚠️  Warning: --state is ignored when --no-controller is specified.');
+    includeState = false;
+  }
+
+  includeState ??= false;
+
   presentationDir.createSync(recursive: true);
 
   screenFile.writeAsStringSync(
-    _getScreenTemplate(featureName, className, camelName, isStateful),
+    _getScreenTemplate(
+      featureName,
+      className,
+      camelName,
+      isStateful,
+      includeController,
+    ),
   );
-  controllerFile.writeAsStringSync(
-    _getControllerTemplate(featureName, className, camelName),
-  );
+
+  final depth = targetFeaturePath.split('/').length + 2;
+  final genPrefix = '../' * depth;
+
+  if (includeController) {
+    if (includeState) {
+      stateFile.writeAsStringSync(
+        _getStateTemplate(featureName, className, genPrefix, targetFeaturePath),
+      );
+      controllerFile.writeAsStringSync(
+        _getControllerWithStateTemplate(
+          featureName,
+          className,
+          camelName,
+          genPrefix,
+          targetFeaturePath,
+        ),
+      );
+    } else {
+      controllerFile.writeAsStringSync(
+        _getControllerTemplate(
+          featureName,
+          className,
+          camelName,
+          genPrefix,
+          targetFeaturePath,
+        ),
+      );
+    }
+  }
 
   print(
     '✅ Successfully created "$featureName" at lib/features/$targetFeaturePath',
   );
   print('   - ${screenFile.path}');
-  print('   - ${controllerFile.path}');
+  if (includeController) {
+    print('   - ${controllerFile.path}');
+    if (includeState) {
+      print('   - ${stateFile.path}');
+    }
+  }
   print('\n⚠️  Don\'t forget to:');
   print(
     '   1. Register your route for ${className}Screen in lib/app/router/app_router.dart',
   );
+  if (includeController) {
+    print(
+      '   2. Run: dart run build_runner build --delete-conflicting-outputs',
+    );
+  }
 }
 
 String _toSnakeCase(String text) {
@@ -156,15 +242,21 @@ String _getScreenTemplate(
   String pascal,
   String camel,
   bool isStateful,
+  bool includeController,
 ) {
   final kebab = snake.replaceAll('_', '-');
   final title = _snakeToTitle(snake);
+  final controllerImport = includeController
+      ? "import '${snake}_controller.dart';\n"
+      : "";
+  final controllerWatch = includeController
+      ? "    // ignore: unused_local_variable\n    final state = ref.watch(${camel}ControllerProvider);\n"
+      : "";
+
   if (isStateful) {
     return '''import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '${snake}_controller.dart';
-
+$controllerImport
 class ${pascal}Screen extends ConsumerStatefulWidget {
   const ${pascal}Screen({super.key});
 
@@ -177,9 +269,7 @@ class ${pascal}Screen extends ConsumerStatefulWidget {
 class _${pascal}ScreenState extends ConsumerState<${pascal}Screen> {
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
-    final state = ref.watch(${camel}ControllerProvider);
-
+$controllerWatch
     return Scaffold(
       appBar: AppBar(
         title: const Text('$title'),
@@ -192,9 +282,7 @@ class _${pascal}ScreenState extends ConsumerState<${pascal}Screen> {
   } else {
     return '''import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '${snake}_controller.dart';
-
+$controllerImport
 class ${pascal}Screen extends ConsumerWidget {
   const ${pascal}Screen({super.key});
 
@@ -202,9 +290,7 @@ class ${pascal}Screen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // ignore: unused_local_variable
-    final state = ref.watch(${camel}ControllerProvider);
-
+$controllerWatch
     return Scaffold(
       appBar: AppBar(
         title: const Text('$title'),
@@ -217,10 +303,19 @@ class ${pascal}Screen extends ConsumerWidget {
   }
 }
 
-String _getControllerTemplate(String snake, String pascal, String camel) {
-  return '''import 'package:flutter_riverpod/flutter_riverpod.dart';
+String _getControllerTemplate(
+  String snake,
+  String pascal,
+  String camel,
+  String genPrefix,
+  String targetFeaturePath,
+) {
+  return '''import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-class ${pascal}Controller extends Notifier<void> {
+part '${genPrefix}gen/features/$targetFeaturePath/presentation/${snake}_controller.g.dart';
+
+@riverpod
+class ${pascal}Controller extends _\$${pascal}Controller {
   @override
   void build() {
     // TODO: Initialize state
@@ -228,9 +323,50 @@ class ${pascal}Controller extends Notifier<void> {
 
   // TODO: Add variables and methods here
 }
+''';
+}
 
-final ${camel}ControllerProvider = NotifierProvider<${pascal}Controller, void>(
-  () => ${pascal}Controller(),
-);
+String _getStateTemplate(
+  String snake,
+  String pascal,
+  String genPrefix,
+  String targetFeaturePath,
+) {
+  return '''import 'package:freezed_annotation/freezed_annotation.dart';
+
+part '${genPrefix}gen/features/$targetFeaturePath/presentation/${snake}_state.freezed.dart';
+
+@freezed
+class ${pascal}State with _\$${pascal}State {
+  const factory ${pascal}State({
+    @Default(false) bool isLoading,
+    String? errorMessage,
+    // TODO: Add more state fields here
+  }) = _${pascal}State;
+}
+''';
+}
+
+String _getControllerWithStateTemplate(
+  String snake,
+  String pascal,
+  String camel,
+  String genPrefix,
+  String targetFeaturePath,
+) {
+  return '''import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '${snake}_state.dart';
+
+part '${genPrefix}gen/features/$targetFeaturePath/presentation/${snake}_controller.g.dart';
+
+@riverpod
+class ${pascal}Controller extends _\$${pascal}Controller {
+  @override
+  ${pascal}State build() {
+    return const ${pascal}State();
+  }
+
+  // TODO: Add methods to manipulate state here
+}
 ''';
 }
