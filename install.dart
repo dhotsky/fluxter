@@ -518,7 +518,12 @@ void _mergeDependencies(
         var replaced = false;
         for (final entry in deps.entries) {
           if (subTrimmed.startsWith('${entry.key}:')) {
-            result.add('  ${entry.key}: ${entry.value}');
+            if (entry.value.startsWith('sdk:')) {
+              result.add('  ${entry.key}:');
+              result.add('    ${entry.value}');
+            } else {
+              result.add('  ${entry.key}: ${entry.value}');
+            }
             addedDeps.add(entry.key);
             replaced = true;
             break;
@@ -534,7 +539,12 @@ void _mergeDependencies(
       // Add remaining deps that weren't already in the file
       for (final entry in deps.entries) {
         if (!addedDeps.contains(entry.key)) {
-          result.add('  ${entry.key}: ${entry.value}');
+          if (entry.value.startsWith('sdk:')) {
+            result.add('  ${entry.key}:');
+            result.add('    ${entry.value}');
+          } else {
+            result.add('  ${entry.key}: ${entry.value}');
+          }
           addedDeps.add(entry.key);
         }
       }
@@ -562,7 +572,12 @@ void _mergeDependencies(
         var replaced = false;
         for (final entry in devDeps.entries) {
           if (subTrimmed.startsWith('${entry.key}:')) {
-            result.add('  ${entry.key}: ${entry.value}');
+            if (entry.value.startsWith('sdk:')) {
+              result.add('  ${entry.key}:');
+              result.add('    ${entry.value}');
+            } else {
+              result.add('  ${entry.key}: ${entry.value}');
+            }
             addedDevDeps.add(entry.key);
             replaced = true;
             break;
@@ -578,7 +593,12 @@ void _mergeDependencies(
       // Add remaining dev deps that weren't already in the file
       for (final entry in devDeps.entries) {
         if (!addedDevDeps.contains(entry.key)) {
-          result.add('  ${entry.key}: ${entry.value}');
+          if (entry.value.startsWith('sdk:')) {
+            result.add('  ${entry.key}:');
+            result.add('    ${entry.value}');
+          } else {
+            result.add('  ${entry.key}: ${entry.value}');
+          }
           addedDevDeps.add(entry.key);
         }
       }
@@ -596,7 +616,12 @@ void _mergeDependencies(
     result.add('');
     result.add('dependencies:');
     for (final entry in deps.entries) {
-      result.add('  ${entry.key}: ${entry.value}');
+      if (entry.value.startsWith('sdk:')) {
+        result.add('  ${entry.key}:');
+        result.add('    ${entry.value}');
+      } else {
+        result.add('  ${entry.key}: ${entry.value}');
+      }
     }
   }
 
@@ -604,7 +629,12 @@ void _mergeDependencies(
     result.add('');
     result.add('dev_dependencies:');
     for (final entry in devDeps.entries) {
-      result.add('  ${entry.key}: ${entry.value}');
+      if (entry.value.startsWith('sdk:')) {
+        result.add('  ${entry.key}:');
+        result.add('    ${entry.value}');
+      } else {
+        result.add('  ${entry.key}: ${entry.value}');
+      }
     }
   }
 
@@ -639,7 +669,7 @@ void _enableL10nGenerate(File pubspecFile) {
   var updated = false;
   for (var line in lines) {
     result.add(line);
-    if (line.trim() == 'flutter:' && !updated) {
+    if (line.trim() == 'flutter:' && !line.startsWith(' ') && !line.startsWith('\t') && !updated) {
       result.add('  generate: true');
       updated = true;
     }
