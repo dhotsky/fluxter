@@ -502,7 +502,6 @@ void _mergeDependencies(
     if (trimmed == 'dependencies:') {
       result.add(line);
       i++;
-      // Process existing entries in this section
       while (i < lines.length) {
         final subLine = lines[i];
         final subTrimmed = subLine.trim();
@@ -512,6 +511,21 @@ void _mergeDependencies(
             !subLine.startsWith(' ') &&
             !subLine.startsWith('\t')) {
           break;
+        }
+
+        // Inject flutter_localizations right after flutter: sdk: flutter
+        if (subTrimmed == 'sdk: flutter' &&
+            i > 0 &&
+            lines[i - 1].trim() == 'flutter:') {
+          result.add(subLine);
+          if (deps.containsKey('flutter_localizations') &&
+              !addedDeps.contains('flutter_localizations')) {
+            result.add('  flutter_localizations:');
+            result.add('    sdk: flutter');
+            addedDeps.add('flutter_localizations');
+          }
+          i++;
+          continue;
         }
 
         // Check if this line is an existing dependency we want to update
@@ -669,7 +683,10 @@ void _enableL10nGenerate(File pubspecFile) {
   var updated = false;
   for (var line in lines) {
     result.add(line);
-    if (line.trim() == 'flutter:' && !line.startsWith(' ') && !line.startsWith('\t') && !updated) {
+    if (line.trim() == 'flutter:' &&
+        !line.startsWith(' ') &&
+        !line.startsWith('\t') &&
+        !updated) {
       result.add('  generate: true');
       updated = true;
     }
@@ -715,9 +732,7 @@ void _stripLocalization(String projectName) {
   }
 
   // 2. Modify lib/features/auth/presentation/login_screen.dart
-  final loginFile = File(
-    'lib/features/auth/presentation/login_screen.dart',
-  );
+  final loginFile = File('lib/features/auth/presentation/login_screen.dart');
   if (loginFile.existsSync()) {
     var content = loginFile.readAsStringSync().replaceAll('\r\n', '\n');
     content = content.replaceAll(
@@ -770,9 +785,7 @@ void _stripLocalization(String projectName) {
   }
 
   // 3. Modify lib/features/home/presentation/home_screen.dart
-  final homeFile = File(
-    'lib/features/home/presentation/home_screen.dart',
-  );
+  final homeFile = File('lib/features/home/presentation/home_screen.dart');
   if (homeFile.existsSync()) {
     var content = homeFile.readAsStringSync().replaceAll('\r\n', '\n');
     content = content.replaceAll(
@@ -887,9 +900,7 @@ void _stripDarkMode(String projectName) {
   }
 
   // 2. Modify lib/features/home/presentation/home_screen.dart
-  final homeFile = File(
-    'lib/features/home/presentation/home_screen.dart',
-  );
+  final homeFile = File('lib/features/home/presentation/home_screen.dart');
   if (homeFile.existsSync()) {
     var content = homeFile.readAsStringSync().replaceAll('\r\n', '\n');
     content = content.replaceAll(
