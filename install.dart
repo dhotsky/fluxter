@@ -333,9 +333,32 @@ void main() {
 
 // ── GitHub API ─────────────────────────────────────────────────────────────
 
-/// Fetch the full file tree under [path] from GitHub API.
+/// Fetch the full file tree under [path] from GitHub API or manifest.txt.
 /// Returns a list of file paths relative to the repo root.
 Future<List<String>> _fetchFileTree(String path) async {
+  // First, try to fetch the list of files from manifest.txt to bypass GitHub API rate limit
+  try {
+    final manifestContent = await _downloadContent('manifest.txt');
+    if (manifestContent != null && manifestContent.trim().isNotEmpty) {
+      final files = manifestContent
+          .split('\n')
+          .map((line) => line.trim())
+          .where(
+            (line) =>
+                line.isNotEmpty &&
+                !line.startsWith('#') &&
+                line.startsWith('$path/'),
+          )
+          .toList();
+      if (files.isNotEmpty) {
+        return files;
+      }
+    }
+  } catch (_) {
+    // Fail silently and fall back to GitHub API
+  }
+
+  // Fallback to GitHub API
   try {
     final client = HttpClient();
     final uri = Uri.parse('$_apiBase/git/trees/$_branch?recursive=1');
