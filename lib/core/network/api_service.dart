@@ -10,6 +10,7 @@ import 'package:fluxter/core/storage/local_storage.dart';
 import 'package:fluxter/features/auth/domain/login_data.dart';
 import 'package:fluxter/features/auth/presentation/auth_controller.dart';
 import 'package:fluxter/features/auth/domain/user.dart';
+import 'package:fluxter/core/chucker/chucker_dio_interceptor.dart';
 
 part '../../gen/core/network/api_service.g.dart';
 
@@ -58,6 +59,7 @@ Dio dio(Ref ref) {
         ref.read(authControllerProvider.notifier).logout();
       },
     ),
+    ChuckerDioInterceptor(),
     AwesomeDioInterceptor(),
   ]);
 

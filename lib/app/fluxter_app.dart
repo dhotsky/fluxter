@@ -7,6 +7,7 @@ import 'package:fluxter/app/theme/app_theme.dart';
 import 'package:fluxter/app/utils/helpers/theme_helper.dart';
 import 'package:fluxter/app/utils/helpers/locale_helper.dart';
 import 'package:fluxter/app/utils/helpers/snackbar_helper.dart';
+import 'package:fluxter/core/chucker/chucker_overlay.dart';
 
 class FluxterApp extends ConsumerWidget {
   const FluxterApp({super.key});
@@ -32,6 +33,9 @@ class FluxterApp extends ConsumerWidget {
       ],
       routerConfig: router,
       scaffoldMessengerKey: scaffoldMessengerKey,
+      builder: (context, child) => ChuckerOverlayWrapper(
+        child: child ?? const SizedBox(),
+      ),
     );
   }
 }

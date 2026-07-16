@@ -14,6 +14,7 @@
 - [Core Module](#-core-module)
   - [Network Layer](#1-network-layer)
   - [Local Storage](#2-local-storage)
+  - [Network Inspector (Chucker)](#3-network-inspector-chucker)
 - [Features Layer](#-features-layer)
   - [Domain (Models)](#1-domain-models)
   - [Data (Repositories)](#2-data-repositories)
@@ -47,6 +48,7 @@ Fluxter is an **architecture template** designed to provide a robust and clean f
 - ✅ Immutable models with code generation (**Freezed + JSON Serializable**)
 - ✅ Consistent dark/light theme system powered by Riverpod
 - ✅ Dynamic dual-language localization (EN & ID) with `.tr` extension
+- ✅ Built-in network inspector (Chucker) — zero-dependency HTTP traffic monitor with draggable overlay
 - ✅ Rich extension library (DateTime, String, Num, Widget, Context)
 - ✅ Comprehensive reusable widget library (Button, TextField, Alert, ListView, GridView, Image, Loading, InkWell, Empty State)
 
@@ -119,6 +121,13 @@ lib/
 │       └── app_text_field.dart        # Multi-variant text field with password toggle
 │
 ├── core/                              # Shared foundation
+│   ├── chucker/
+│   │   ├── chucker.dart               # Inspector state manager & config
+│   │   ├── chucker_dio_interceptor.dart # Dio interceptor for traffic capture
+│   │   ├── chucker_http_log.dart      # HTTP transaction data model
+│   │   ├── chucker_overlay.dart       # Draggable floating bubble overlay
+│   │   ├── chucker_screen.dart        # Network log list screen
+│   │   └── chucker_detail_screen.dart # Request/response detail screen
 │   ├── network/
 │   │   ├── api_manager.dart           # DioException error mapping utility
 │   │   ├── api_response.dart          # Sealed generic API response wrapper
@@ -200,6 +209,52 @@ A queued interceptor that catches expired credentials:
 ### 2. Local Storage
 
 Located in `lib/core/storage/local_storage.dart`, provides a `SharedPreferences` wrapper exposed via `localStorageProvider`. Supports storing tokens, theme preferences, locale settings, and custom key-value data.
+
+### 3. Network Inspector (Chucker)
+
+Fluxter includes a **built-in, zero-dependency HTTP network inspector** (inspired by Chucker) that captures and displays all Dio traffic in a beautiful dark developer dashboard — no external packages required.
+
+#### Features
+- 📡 **Automatic Traffic Capture**: Intercepts all Dio requests, responses, and errors via `ChuckerDioInterceptor`.
+- 🔍 **Searchable Log List**: Filter by method, URL path, or status code with quick-filter chips (All, Success, Errors, Pending).
+- 📋 **Detailed Inspection**: Tabbed detail view showing Overview, Request headers/body, Response headers/body, and Error stack trace.
+- 📎 **Copy Actions**: Copy formatted JSON body, error details, or the request as a `curl` command.
+- 🫧 **Draggable Floating Bubble**: AssistiveTouch-style overlay that snaps to the screen edge and shows a live badge count of requests/errors.
+- 🔒 **Auto-Hide on Inspector Screens**: The floating bubble hides itself when viewing the inspector to keep the UI clean.
+- 🧠 **Memory-Safe**: Caps stored logs at 100 entries to prevent memory leaks.
+
+#### Configuration
+
+In `main.dart`:
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Enable the built-in network inspector
+  Chucker.enabled = true;
+  Chucker.showInRelease = false; // Set to true to show in release builds
+
+  await AppModule.initService();
+  runApp(const ProviderScope(child: FluxterApp()));
+}
+```
+
+#### Architecture
+
+| File                         | Description                                           |
+|------------------------------|-------------------------------------------------------|
+| `chucker.dart`               | Static state manager: `enabled`, `showInRelease`, log store, navigator key |
+| `chucker_dio_interceptor.dart` | Dio `Interceptor` that records HTTP transactions    |
+| `chucker_http_log.dart`      | Data model for a single HTTP transaction              |
+| `chucker_overlay.dart`       | `ChuckerOverlayWrapper` (Stack injector) + `ChuckerFloatingBubble` |
+| `chucker_screen.dart`        | Searchable log list with filter chips                 |
+| `chucker_detail_screen.dart` | Tabbed detail view with copy actions                  |
+
+The inspector integrates automatically:
+- `ChuckerDioInterceptor` is registered in `api_service.dart`.
+- `ChuckerOverlayWrapper` is injected in `fluxter_app.dart`'s `builder`.
+- `Chucker.navigatorKey` is assigned to `GoRouter` in `app_router.dart`.
+- `/chucker` routes bypass authentication guards so the inspector is accessible from any screen.
 
 ---
 

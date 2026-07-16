@@ -326,7 +326,10 @@ void main() {
   print('   Next steps:');
   print('   1. Open lib/app/config/app_config.dart');
   print('   2. Change baseUrl to your API URL');
-  print('   3. Run: flutter run');
+  print('   3. Configure the built-in Network Inspector in lib/main.dart:');
+  print('      Chucker.enabled = true;');
+  print('      Chucker.showInRelease = false;');
+  print('   4. Run: flutter run');
   print('');
   print('═' * 60);
 }
