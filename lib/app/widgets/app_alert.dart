@@ -25,10 +25,11 @@ class AppAlert {
     final displayButtonText = buttonText ?? TranslationKeys.understand.tr;
     return showDialog<void>(
       context: context,
+      useSafeArea: true,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        content: Text(message),
+        content: SingleChildScrollView(child: Text(message)),
         actions: [
           AppButton(
             text: displayButtonText,
@@ -53,6 +54,8 @@ class AppAlert {
     final displayButtonText = buttonText ?? TranslationKeys.understand.tr;
     return showModalBottomSheet<void>(
       context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -76,9 +79,16 @@ class AppAlert {
                   ),
                 ),
                 8.height,
-                Text(
-                  message,
-                  style: TextStyle(fontSize: 14, color: context.textSecondary),
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Text(
+                      message,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: context.textSecondary,
+                      ),
+                    ),
+                  ),
                 ),
                 24.height,
                 AppButton(
@@ -112,10 +122,11 @@ class AppAlert {
     final displayCancelText = cancelText ?? TranslationKeys.cancel.tr;
     return showDialog<bool>(
       context: context,
+      useSafeArea: true,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        content: Text(message),
+        content: SingleChildScrollView(child: Text(message)),
         actions: [
           Row(
             children: [
@@ -158,6 +169,8 @@ class AppAlert {
     final displayCancelText = cancelText ?? TranslationKeys.cancel.tr;
     return showModalBottomSheet<bool>(
       context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -181,9 +194,16 @@ class AppAlert {
                   ),
                 ),
                 8.height,
-                Text(
-                  message,
-                  style: TextStyle(fontSize: 14, color: context.textSecondary),
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Text(
+                      message,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: context.textSecondary,
+                      ),
+                    ),
+                  ),
                 ),
                 24.height,
                 Row(

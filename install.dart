@@ -750,6 +750,10 @@ void _stripLocalization(String projectName) {
       "",
     );
     content = content.replaceAll(
+      "      supportedLocales: const [Locale('en', 'US'), Locale('id', 'ID')],\n",
+      "",
+    );
+    content = content.replaceAll(
       "      localizationsDelegates: const [\n"
           "        GlobalMaterialLocalizations.delegate,\n"
           "        GlobalWidgetsLocalizations.delegate,\n"
@@ -758,6 +762,69 @@ void _stripLocalization(String projectName) {
       "",
     );
     appFile.writeAsStringSync(content);
+  }
+
+  // 2. Modify lib/app/widgets/app_alert.dart
+  final alertFile = File('lib/app/widgets/app_alert.dart');
+  if (alertFile.existsSync()) {
+    var content = alertFile.readAsStringSync().replaceAll('\r\n', '\n');
+    content = content.replaceAll(
+      "import 'package:$projectName/app/localization/translation_keys.dart';\n",
+      "",
+    );
+    content = content.replaceAll(
+      "import 'package:$projectName/app/localization/app_translations.dart';\n",
+      "",
+    );
+    content = content.replaceAll(
+      "TranslationKeys.understand.tr",
+      "'Understand'",
+    );
+    content = content.replaceAll("TranslationKeys.yes.tr", "'Yes'");
+    content = content.replaceAll("TranslationKeys.cancel.tr", "'Cancel'");
+    alertFile.writeAsStringSync(content);
+  }
+
+  // 3. Modify lib/app/widgets/app_empty.dart
+  final emptyFile = File('lib/app/widgets/app_empty.dart');
+  if (emptyFile.existsSync()) {
+    var content = emptyFile.readAsStringSync().replaceAll('\r\n', '\n');
+    content = content.replaceAll(
+      "import 'package:$projectName/app/localization/translation_keys.dart';\n",
+      "",
+    );
+    content = content.replaceAll(
+      "import 'package:$projectName/app/localization/app_translations.dart';\n",
+      "",
+    );
+    content = content.replaceAll(
+      "TranslationKeys.noDataFound.tr",
+      "'No Data Found'",
+    );
+    content = content.replaceAll(
+      "TranslationKeys.noDataMessage.tr",
+      "'There is no data to display right now.'",
+    );
+    emptyFile.writeAsStringSync(content);
+  }
+
+  // 4. Modify lib/app/widgets/app_loading.dart
+  final loadingFile = File('lib/app/widgets/app_loading.dart');
+  if (loadingFile.existsSync()) {
+    var content = loadingFile.readAsStringSync().replaceAll('\r\n', '\n');
+    content = content.replaceAll(
+      "import 'package:$projectName/app/localization/translation_keys.dart';\n",
+      "",
+    );
+    content = content.replaceAll(
+      "import 'package:$projectName/app/localization/app_translations.dart';\n",
+      "",
+    );
+    content = content.replaceAll(
+      "TranslationKeys.processing.tr",
+      "'Processing...'",
+    );
+    loadingFile.writeAsStringSync(content);
   }
 
   // 2. Modify lib/features/auth/presentation/login_screen.dart
