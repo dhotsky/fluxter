@@ -167,12 +167,15 @@ Future<void> main(List<String> args) async {
     fileList.removeWhere(
       (path) =>
           path.startsWith('lib/app/localization/') ||
-          path == 'lib/app/utils/helpers/locale_helper.dart',
+          path == 'lib/app/utils/helpers/locale_helper.dart' ||
+          path == 'lib/gen/app/utils/helpers/locale_helper.g.dart',
     );
   }
   if (!enableDarkMode) {
     fileList.removeWhere(
-      (path) => path == 'lib/app/utils/helpers/theme_helper.dart',
+      (path) =>
+          path == 'lib/app/utils/helpers/theme_helper.dart' ||
+          path == 'lib/gen/app/utils/helpers/theme_helper.g.dart',
     );
   }
   if (fileList.isEmpty) {
