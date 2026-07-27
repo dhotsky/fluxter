@@ -20,19 +20,3 @@ class AppTranslations {
     return translationMap[key] ?? key;
   }
 }
-
-extension TranslationExtension on String {
-  /// Translates the string based on the active locale.
-  /// Example: `TranslationKeys.welcome.tr`
-  String get tr => AppTranslations.translate(this);
-
-  /// Translates the string and replaces placeholder parameters.
-  /// Example: `TranslationKeys.welcomeUser.trParams({'value': 'John'})`
-  String trParams(Map<String, String> params) {
-    var translated = tr;
-    params.forEach((key, value) {
-      translated = translated.replaceAll('@$key', value);
-    });
-    return translated;
-  }
-}

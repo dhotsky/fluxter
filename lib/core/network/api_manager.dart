@@ -32,7 +32,7 @@ class ApiManager {
     } on DioException catch (e) {
       return _handleDioError(e);
     } catch (e) {
-      return ApiError('${TranslationKeys.errUnknown.tr}: $e');
+      return ApiError('${AppTranslations.translate(TranslationKeys.errUnknown)}: $e');
     }
   }
 
@@ -41,7 +41,7 @@ class ApiManager {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return ApiError(TranslationKeys.errTimeout.tr, statusCode: 408);
+        return ApiError(AppTranslations.translate(TranslationKeys.errTimeout), statusCode: 408);
       case DioExceptionType.badResponse:
         final statusCode = e.response?.statusCode ?? 500;
         final serverMessage = _parseErrorMessage(e.response);
@@ -50,27 +50,27 @@ class ApiManager {
         }
         if (statusCode == 400) {
           return ApiError(
-            TranslationKeys.errBadRequest.tr,
+            AppTranslations.translate(TranslationKeys.errBadRequest),
             statusCode: statusCode,
           );
         } else if (statusCode == 401) {
           return ApiError(
-            TranslationKeys.errUnauthorized.tr,
+            AppTranslations.translate(TranslationKeys.errUnauthorized),
             statusCode: statusCode,
           );
         } else if (statusCode == 404) {
           return ApiError(
-            TranslationKeys.errNotFound.tr,
+            AppTranslations.translate(TranslationKeys.errNotFound),
             statusCode: statusCode,
           );
         } else if (statusCode >= 500) {
-          return ApiError(TranslationKeys.errServer.tr, statusCode: statusCode);
+          return ApiError(AppTranslations.translate(TranslationKeys.errServer), statusCode: statusCode);
         }
-        return ApiError(TranslationKeys.errUnknown.tr, statusCode: statusCode);
+        return ApiError(AppTranslations.translate(TranslationKeys.errUnknown), statusCode: statusCode);
       case DioExceptionType.connectionError:
-        return ApiError(TranslationKeys.errNoInternet.tr);
+        return ApiError(AppTranslations.translate(TranslationKeys.errNoInternet));
       default:
-        return ApiError(TranslationKeys.errUnknown.tr);
+        return ApiError(AppTranslations.translate(TranslationKeys.errUnknown));
     }
   }
 

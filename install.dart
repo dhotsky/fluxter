@@ -777,11 +777,11 @@ void _stripLocalization(String projectName) {
       "",
     );
     content = content.replaceAll(
-      "TranslationKeys.understand.tr",
-      "'Understand'",
+      "context.tr.understand",
+      "'I Understand'",
     );
-    content = content.replaceAll("TranslationKeys.yes.tr", "'Yes'");
-    content = content.replaceAll("TranslationKeys.cancel.tr", "'Cancel'");
+    content = content.replaceAll("context.tr.yes", "'Yes'");
+    content = content.replaceAll("context.tr.cancel", "'Cancel'");
     alertFile.writeAsStringSync(content);
   }
 
@@ -798,12 +798,12 @@ void _stripLocalization(String projectName) {
       "",
     );
     content = content.replaceAll(
-      "TranslationKeys.noDataFound.tr",
+      "context.tr.noDataFound",
       "'No Data Found'",
     );
     content = content.replaceAll(
-      "TranslationKeys.noDataMessage.tr",
-      "'There is no data to display right now.'",
+      "context.tr.noDataMessage",
+      "'There is currently no data to display.'",
     );
     emptyFile.writeAsStringSync(content);
   }
@@ -861,22 +861,22 @@ void _stripLocalization(String projectName) {
     );
 
     // Update localized strings to raw English
-    content = content.replaceAll("TranslationKeys.welcome.tr", "'Welcome 👋'");
+    content = content.replaceAll("context.tr.welcome", "'Welcome 👋'");
     content = content.replaceAll(
-      "TranslationKeys.pleaseLogin.tr",
+      "context.tr.pleaseLogin",
       "'Please log in to continue'",
     );
-    content = content.replaceAll("TranslationKeys.email.tr", "'Email'");
+    content = content.replaceAll("context.tr.email", "'Email'");
     content = content.replaceAll(
-      "TranslationKeys.enterEmail.tr",
+      "context.tr.enterEmail",
       "'Enter your email'",
     );
-    content = content.replaceAll("TranslationKeys.password.tr", "'Password'");
+    content = content.replaceAll("context.tr.password", "'Password'");
     content = content.replaceAll(
-      "TranslationKeys.enterPassword.tr",
+      "context.tr.enterPassword",
       "'Enter your password'",
     );
-    content = content.replaceAll("TranslationKeys.login.tr", "'Log In'");
+    content = content.replaceAll("context.tr.login", "'Log In'");
     loginFile.writeAsStringSync(content);
   }
 

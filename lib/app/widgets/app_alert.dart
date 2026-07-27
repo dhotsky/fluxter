@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:fluxter/app/theme/app_color.dart';
 import 'package:fluxter/app/utils/extensions/extensions.dart';
-import 'package:fluxter/app/localization/translation_keys.dart';
-import 'package:fluxter/app/localization/app_translations.dart';
 
 import 'package:fluxter/app/widgets/app_button.dart';
 
@@ -22,7 +20,7 @@ class AppAlert {
     String? buttonText,
     VoidCallback? onPressed,
   }) async {
-    final displayButtonText = buttonText ?? TranslationKeys.understand.tr;
+    final displayButtonText = buttonText ?? context.tr.understand;
     return showDialog<void>(
       context: context,
       useSafeArea: true,
@@ -51,7 +49,7 @@ class AppAlert {
     String? buttonText,
     VoidCallback? onPressed,
   }) async {
-    final displayButtonText = buttonText ?? TranslationKeys.understand.tr;
+    final displayButtonText = buttonText ?? context.tr.understand;
     return showModalBottomSheet<void>(
       context: context,
       useSafeArea: true,
@@ -118,8 +116,8 @@ class AppAlert {
     String? cancelText,
     bool isDanger = false,
   }) async {
-    final displayConfirmText = confirmText ?? TranslationKeys.yes.tr;
-    final displayCancelText = cancelText ?? TranslationKeys.cancel.tr;
+    final displayConfirmText = confirmText ?? context.tr.yes;
+    final displayCancelText = cancelText ?? context.tr.cancel;
     return showDialog<bool>(
       context: context,
       useSafeArea: true,
@@ -165,8 +163,8 @@ class AppAlert {
     String? cancelText,
     bool isDanger = false,
   }) async {
-    final displayConfirmText = confirmText ?? TranslationKeys.yes.tr;
-    final displayCancelText = cancelText ?? TranslationKeys.cancel.tr;
+    final displayConfirmText = confirmText ?? context.tr.yes;
+    final displayCancelText = cancelText ?? context.tr.cancel;
     return showModalBottomSheet<bool>(
       context: context,
       useSafeArea: true,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluxter/app/localization/translation_keys.dart';
 
 extension ContextExtension on BuildContext {
   // ── Theme & Styling Shortcuts ──────────────────────────────────────────
@@ -12,4 +13,22 @@ extension ContextExtension on BuildContext {
   double get width => mediaQuery.size.width;
   double get height => mediaQuery.size.height;
   EdgeInsets get padding => mediaQuery.padding;
+
+  // ── Navigation Shortcuts ──────────────────────────────────────────────
+  void popUntil(bool Function(Route<dynamic>) predicate) {
+    Navigator.of(this).popUntil(predicate);
+  }
+
+  Future<T?> popAndPushNamed<T extends Object?, TO extends Object?>(
+    String routeName, {
+    TO? result,
+    Object? arguments,
+  }) {
+    return Navigator.of(
+      this,
+    ).popAndPushNamed<T, TO>(routeName, result: result, arguments: arguments);
+  }
+
+  // ── Localization ────────────────────────────────────────────────────────
+  AppTranslationsWrapper get tr => AppTranslationsWrapper(this);
 }

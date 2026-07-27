@@ -5,8 +5,6 @@ import 'package:fluxter/app/utils/extensions/extensions.dart';
 import 'package:fluxter/app/widgets/app_button.dart';
 import 'package:fluxter/app/widgets/app_text_field.dart';
 import 'package:fluxter/app/utils/helpers/snackbar_helper.dart';
-import 'package:fluxter/app/localization/translation_keys.dart';
-import 'package:fluxter/app/localization/app_translations.dart';
 import 'package:fluxter/app/utils/helpers/locale_helper.dart';
 import 'package:fluxter/features/auth/presentation/auth_controller.dart';
 
@@ -124,7 +122,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       8.height,
                       Text(
-                        TranslationKeys.welcome.tr,
+                        context.tr.welcome,
                         style: TextStyle(
                           color: context.textPrimary,
                           fontSize: 22,
@@ -133,7 +131,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       4.height,
                       Text(
-                        TranslationKeys.pleaseLogin.tr,
+                        context.tr.pleaseLogin,
                         style: TextStyle(
                           color: context.textSecondary,
                           fontSize: 14,
@@ -143,29 +141,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                       // ── Email Field ──
                       AppTextField.outlined(
-                        title: TranslationKeys.email.tr,
+                        title: context.tr.email,
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
-                        hintText: TranslationKeys.enterEmail.tr,
+                        hintText: context.tr.enterEmail,
                         prefixIcon: const Icon(Icons.email_outlined),
                       ),
                       20.height,
 
                       // ── Password Field ──
                       AppTextField.outlined(
-                        title: TranslationKeys.password.tr,
+                        title: context.tr.password,
                         controller: _passwordController,
                         isPassword: true,
                         textInputAction: TextInputAction.done,
-                        hintText: TranslationKeys.enterPassword.tr,
+                        hintText: context.tr.enterPassword,
                         prefixIcon: const Icon(Icons.lock_outlined),
                       ),
                       32.height,
 
                       // ── Login Button ──
                       AppButton(
-                        text: TranslationKeys.login.tr,
+                        text: context.tr.login,
                         width: double.infinity,
                         isLoading: isLoading,
                         onPressed: _handleLogin,

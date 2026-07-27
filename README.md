@@ -369,7 +369,7 @@ Fluxter includes a lightweight, Riverpod-powered dual-language localization syst
 
 | File                       | Description                                    |
 |----------------------------|------------------------------------------------|
-| `app_translations.dart`    | Translation engine + `.tr` / `.trParams()` extensions |
+| `app_translations.dart`    | Translation engine + `context.tr` extensions |
 | `translation_keys.dart`    | Centralized translation key constants          |
 | `en_us.dart`               | English translation map                        |
 | `id_id.dart`               | Indonesian translation map                     |
@@ -378,10 +378,10 @@ Fluxter includes a lightweight, Riverpod-powered dual-language localization syst
 #### Usage
 ```dart
 // Simple translation
-TranslationKeys.welcome.tr
+context.tr.welcome
 
 // Parameterized translation
-TranslationKeys.welcomeUser.trParams({'value': 'John'})
+context.tr.welcomeUser({'value': 'John'})
 
 // Change locale
 ref.read(localeProvider.notifier).setLocale('id');
@@ -703,12 +703,24 @@ dart run :fluxter_repository <name> --<feature_name> --api-service --local-stora
 * `dart run :fluxter_repository auth` → `lib/features/auth/data/auth_repository.dart` (Clean repository)
 * `dart run :fluxter_repository payment --api-service --local-storage` → `lib/features/payment/data/payment_repository.dart` (With ApiService and LocalStorage)
 
-### 4. Interactive Translation Generator
-Add translation keys dynamically into localization files (`translation_keys.dart`, `en_us.dart`, and `id_id.dart`):
+### 4. Translation Generator
+Add translation keys dynamically into localization files (`translation_keys.dart`, `en_us.dart`, and `id_id.dart`). You can run it interactively or pass arguments directly.
+
+*Interactive Mode:*
 ```bash
 dart run :fluxter_translate
 ```
-This interactive script will guide you to enter the Translation Key (in camelCase/snake_case), the English string, and the Indonesian translation, then injects them safely and automatically into the files.
+This will guide you to enter the Translation Key (in camelCase/snake_case), the English string, and the Indonesian translation.
+
+*Quick Mode (with arguments):*
+```bash
+dart run :fluxter_translate welcomeUser "Welcome, @name!" "Selamat datang, @name!"
+```
+Or using `--` separator if you prefer:
+```bash
+dart run :fluxter_translate welcomeUser -- "Welcome, @name!" -- "Selamat datang, @name!"
+```
+It safely and automatically injects them into the localization files and updates the `context.tr` extension.
 
 ---
 

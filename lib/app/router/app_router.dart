@@ -13,6 +13,8 @@ import 'package:fluxter/core/chucker/chucker_detail_screen.dart';
 
 part '../../gen/app/router/app_router.g.dart';
 
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+
 class RouterNotifier extends ChangeNotifier {
   final Ref _ref;
 
@@ -33,8 +35,10 @@ RouterNotifier routerNotifier(Ref ref) {
 GoRouter goRouter(Ref ref) {
   final notifier = ref.watch(routerProvider);
 
+  Chucker.navigatorKey = rootNavigatorKey;
+
   return GoRouter(
-    navigatorKey: Chucker.navigatorKey,
+    navigatorKey: rootNavigatorKey,
     initialLocation: LoginScreen.routePath,
     refreshListenable: notifier,
     routes: [

@@ -24,6 +24,8 @@ class AppTextField extends StatefulWidget {
   final bool readOnly;
   final int? maxLines;
   final int? minLines;
+  final bool isDense;
+  final EdgeInsetsGeometry? contentPadding;
   final VoidCallback? onTap;
 
   const AppTextField({
@@ -44,6 +46,8 @@ class AppTextField extends StatefulWidget {
     this.readOnly = false,
     this.maxLines = 1,
     this.minLines,
+    this.isDense = true,
+    this.contentPadding,
     this.onTap,
   });
 
@@ -64,6 +68,8 @@ class AppTextField extends StatefulWidget {
     this.readOnly = false,
     this.maxLines = 1,
     this.minLines,
+    this.isDense = true,
+    this.contentPadding,
     this.onTap,
   }) : variant = AppTextFieldVariant.outlined;
 
@@ -84,6 +90,8 @@ class AppTextField extends StatefulWidget {
     this.readOnly = false,
     this.maxLines = 1,
     this.minLines,
+    this.isDense = true,
+    this.contentPadding,
     this.onTap,
   }) : variant = AppTextFieldVariant.underline;
 
@@ -104,6 +112,8 @@ class AppTextField extends StatefulWidget {
     this.readOnly = false,
     this.maxLines = 1,
     this.minLines,
+    this.isDense = true,
+    this.contentPadding,
     this.onTap,
   }) : variant = AppTextFieldVariant.basic;
 
@@ -124,6 +134,8 @@ class AppTextField extends StatefulWidget {
     this.readOnly = false,
     this.maxLines = 1,
     this.minLines,
+    this.isDense = true,
+    this.contentPadding,
     this.onTap,
   }) : variant = AppTextFieldVariant.floating;
 
@@ -234,11 +246,11 @@ class _AppTextFieldState extends State<AppTextField> {
       case AppTextFieldVariant.outlined:
         return InputDecoration(
           filled: true,
+          isDense: widget.isDense,
           fillColor: context.surface,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
-          ),
+          contentPadding:
+              widget.contentPadding ??
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: context.divider),
@@ -259,10 +271,10 @@ class _AppTextFieldState extends State<AppTextField> {
       case AppTextFieldVariant.underline:
         return InputDecoration(
           filled: false,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 0,
-            vertical: 12,
-          ),
+          isDense: widget.isDense,
+          contentPadding:
+              widget.contentPadding ??
+              const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
           border: UnderlineInputBorder(
             borderSide: BorderSide(color: context.divider),
           ),
@@ -277,9 +289,11 @@ class _AppTextFieldState extends State<AppTextField> {
           ),
         );
       case AppTextFieldVariant.basic:
-        return const InputDecoration(
+        return InputDecoration(
           filled: false,
-          contentPadding: EdgeInsets.symmetric(vertical: 12),
+          isDense: widget.isDense,
+          contentPadding:
+              widget.contentPadding ?? EdgeInsets.symmetric(vertical: 12),
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
@@ -288,10 +302,10 @@ class _AppTextFieldState extends State<AppTextField> {
       case AppTextFieldVariant.floating:
         return InputDecoration(
           filled: false,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
-          ),
+          isDense: widget.isDense,
+          contentPadding:
+              widget.contentPadding ??
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,

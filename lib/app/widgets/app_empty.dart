@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:fluxter/app/theme/app_color.dart';
 import 'package:fluxter/app/utils/extensions/extensions.dart';
-import 'package:fluxter/app/localization/translation_keys.dart';
-import 'package:fluxter/app/localization/app_translations.dart';
 
 /// Reusable Empty State Widget.
 ///
@@ -24,8 +22,8 @@ class AppEmpty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayTitle = title ?? TranslationKeys.noDataFound.tr;
-    final displayMessage = message ?? TranslationKeys.noDataMessage.tr;
+    final displayTitle = title ?? context.tr.noDataFound;
+    final displayMessage = message ?? context.tr.noDataMessage;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,

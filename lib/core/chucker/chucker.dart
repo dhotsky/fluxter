@@ -21,8 +21,7 @@ class Chucker {
   static Stream<List<ChuckerHttpLog>> get logsStream =>
       _logsStreamController.stream;
 
-  static final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   static bool get enabled => _enabled;
   static set enabled(bool value) {

@@ -6,8 +6,6 @@ import 'package:fluxter/app/theme/app_color.dart';
 import 'package:fluxter/app/utils/helpers/theme_helper.dart';
 import 'package:fluxter/app/widgets/app_alert.dart';
 import 'package:fluxter/app/widgets/app_button.dart';
-import 'package:fluxter/app/localization/translation_keys.dart';
-import 'package:fluxter/app/localization/app_translations.dart';
 import 'package:fluxter/app/utils/helpers/locale_helper.dart';
 import 'package:fluxter/features/auth/presentation/auth_controller.dart';
 
@@ -19,10 +17,10 @@ class HomeScreen extends ConsumerWidget {
   void _showLogoutConfirmation(BuildContext context, WidgetRef ref) async {
     final confirm = await AppAlert.showConfirmationBottomSheet(
       context: context,
-      title: TranslationKeys.logoutConfirmTitle.tr,
-      message: TranslationKeys.logoutConfirmMessage.tr,
-      confirmText: TranslationKeys.logoutConfirmTitle.tr,
-      cancelText: TranslationKeys.cancel.tr,
+      title: context.tr.logoutConfirmTitle,
+      message: context.tr.logoutConfirmMessage,
+      confirmText: context.tr.logoutConfirmTitle,
+      cancelText: context.tr.cancel,
       isDanger: true,
     );
 
@@ -39,7 +37,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(TranslationKeys.home.tr),
+        title: Text(context.tr.home),
         actions: [
           AppButton.custom(
             onPressed: () {
@@ -61,7 +59,7 @@ class HomeScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              TranslationKeys.welcomeUser.trParams({'value': name}),
+              context.tr.welcomeUser({'value': name}),
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -71,7 +69,7 @@ class HomeScreen extends ConsumerWidget {
             32.height,
             AppButton(
               width: double.infinity,
-              text: TranslationKeys.logout.tr,
+              text: context.tr.logout,
               isLoading: authState.isLoading,
               onPressed: () => _showLogoutConfirmation(context, ref),
             ),

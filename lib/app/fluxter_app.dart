@@ -33,9 +33,8 @@ class FluxterApp extends ConsumerWidget {
       ],
       routerConfig: router,
       scaffoldMessengerKey: scaffoldMessengerKey,
-      builder: (context, child) => ChuckerOverlayWrapper(
-        child: child ?? const SizedBox(),
-      ),
+      builder: (context, child) =>
+          ChuckerOverlayWrapper(child: child ?? const SizedBox()),
     );
   }
 }
