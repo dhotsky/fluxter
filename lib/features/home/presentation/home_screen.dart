@@ -16,7 +16,7 @@ class HomeScreen extends ConsumerWidget {
 
   void _showLogoutConfirmation(BuildContext context, WidgetRef ref) async {
     final confirm = await AppAlert.showConfirmationBottomSheet(
-      context: context,
+      context,
       title: context.tr.logoutConfirmTitle,
       message: context.tr.logoutConfirmMessage,
       confirmText: context.tr.logoutConfirmTitle,

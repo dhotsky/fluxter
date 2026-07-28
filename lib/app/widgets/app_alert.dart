@@ -13,8 +13,8 @@ class AppAlert {
   // ── Single Action Alerts ───────────────────────────────────────────────
 
   /// Show a simple alert as a popup Dialog.
-  static Future<void> showDialogAlert({
-    required BuildContext context,
+  static Future<void> showDialogAlert(
+    BuildContext context, {
     required String title,
     required String message,
     String? buttonText,
@@ -42,8 +42,8 @@ class AppAlert {
   }
 
   /// Show a simple alert as a Bottom Sheet.
-  static Future<void> showBottomSheetAlert({
-    required BuildContext context,
+  static Future<void> showBottomSheetAlert(
+    BuildContext context, {
     required String title,
     required String message,
     String? buttonText,
@@ -108,8 +108,8 @@ class AppAlert {
 
   /// Show a confirmation alert as a popup Dialog.
   /// Returns [true] if confirmed, [false] or [null] if canceled/dismissed.
-  static Future<bool?> showConfirmationDialog({
-    required BuildContext context,
+  static Future<bool?> showConfirmationDialog(
+    BuildContext context, {
     required String title,
     required String message,
     String? confirmText,
@@ -155,8 +155,8 @@ class AppAlert {
 
   /// Show a confirmation alert as a Bottom Sheet.
   /// Returns [true] if confirmed, [false] or [null] if canceled/dismissed.
-  static Future<bool?> showConfirmationBottomSheet({
-    required BuildContext context,
+  static Future<bool?> showConfirmationBottomSheet(
+    BuildContext context, {
     required String title,
     required String message,
     String? confirmText,
