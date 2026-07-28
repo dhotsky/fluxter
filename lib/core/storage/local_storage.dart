@@ -22,11 +22,9 @@ class LocalStorage {
     return _instance;
   }
 
-  // ── Keys ──────────────────────────────────────────
-  static const _tokenKey = 'TOKEN_KEY';
-  static const _userKey = 'USER_KEY';
-
   // ── Token ─────────────────────────────────────────
+  static const _tokenKey = 'TOKEN_KEY';
+
   Token? get token {
     final jsonString = _prefs.getString(_tokenKey);
     if (jsonString == null) return null;
@@ -37,6 +35,8 @@ class LocalStorage {
       _prefs.setString(_tokenKey, jsonEncode(token.toJson()));
 
   // ── User ──────────────────────────────────────────
+  static const _userKey = 'USER_KEY';
+
   User? get user {
     final jsonString = _prefs.getString(_userKey);
     if (jsonString == null) return null;
