@@ -23,7 +23,6 @@ class AppInkWell extends StatelessWidget {
 
   const AppInkWell({
     super.key,
-    required this.child,
     this.onTap,
     this.onLongPress,
     this.onDoubleTap,
@@ -38,6 +37,7 @@ class AppInkWell extends StatelessWidget {
     this.splashColor,
     this.highlightColor,
     this.clipBehavior = Clip.none,
+    required this.child,
   });
 
   @override

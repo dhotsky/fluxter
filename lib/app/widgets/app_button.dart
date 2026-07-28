@@ -43,10 +43,10 @@ class AppButton extends StatelessWidget {
   // ── Filled (Default) ────────────────────────────────
   const AppButton({
     super.key,
+    required this.onPressed,
     required String this.text,
     this.fontSize,
     this.fontWeight,
-    required this.onPressed,
     this.width,
     this.height,
     this.isLoading = false,
@@ -64,10 +64,10 @@ class AppButton extends StatelessWidget {
   // ── Outlined ────────────────────────────────────────
   const AppButton.outlined({
     super.key,
+    required this.onPressed,
     required String this.text,
     this.fontSize,
     this.fontWeight,
-    required this.onPressed,
     this.width,
     this.height,
     this.isLoading = false,
@@ -85,10 +85,10 @@ class AppButton extends StatelessWidget {
   // ── Shadow (Elevated) ──────────────────────────────
   const AppButton.shadow({
     super.key,
+    required this.onPressed,
     required String this.text,
     this.fontSize,
     this.fontWeight,
-    required this.onPressed,
     this.width,
     this.height,
     this.isLoading = false,
@@ -106,10 +106,10 @@ class AppButton extends StatelessWidget {
   // ── Danger ─────────────────────────────────────────
   const AppButton.danger({
     super.key,
+    required this.onPressed,
     required String this.text,
     this.fontSize,
     this.fontWeight,
-    required this.onPressed,
     this.width,
     this.height,
     this.isLoading = false,
@@ -127,10 +127,10 @@ class AppButton extends StatelessWidget {
   // ── Soft ───────────────────────────────────────────
   const AppButton.soft({
     super.key,
+    required this.onPressed,
     required String this.text,
     this.fontSize,
     this.fontWeight,
-    required this.onPressed,
     this.width,
     this.height,
     this.isLoading = false,
@@ -148,10 +148,10 @@ class AppButton extends StatelessWidget {
   // ── Text ───────────────────────────────────────────
   const AppButton.text({
     super.key,
+    required this.onPressed,
     required String this.text,
     this.fontSize,
     this.fontWeight,
-    required this.onPressed,
     this.width,
     this.height,
     this.isLoading = false,
@@ -169,7 +169,6 @@ class AppButton extends StatelessWidget {
   // ── Custom ─────────────────────────────────────────
   const AppButton.custom({
     super.key,
-    required Widget this.child,
     required this.onPressed,
     this.variant = AppButtonVariant.text,
     this.width,
@@ -181,6 +180,7 @@ class AppButton extends StatelessWidget {
     this.borderColor,
     this.borderRadius,
     this.padding,
+    required Widget this.child,
   }) : text = null,
        fontSize = null,
        fontWeight = null,
