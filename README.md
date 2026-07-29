@@ -703,7 +703,28 @@ dart run :fluxter_repository <name> --<feature_name> --api-service --local-stora
 * `dart run :fluxter_repository auth` → `lib/features/auth/data/auth_repository.dart` (Clean repository)
 * `dart run :fluxter_repository payment --api-service --local-storage` → `lib/features/payment/data/payment_repository.dart` (With ApiService and LocalStorage)
 
-### 4. Translation Generator
+### 4. Generate Controller
+Generate a standalone Riverpod controller inside an existing feature's `presentation/` folder:
+```bash
+# Simple controller
+dart run :fluxter_controller <name>
+
+# Controller inside a specific feature with Freezed state and repository
+dart run :fluxter_controller <name> --<feature_name> --state --repository
+```
+*Flags:*
+- `--state` : Include a Freezed state model (`@freezed` class) in the controller file.
+- `--repository` : Inject repository dependency and watch it in the `build` method.
+- `--<feature>` : Target feature folder (defaults to name itself).
+
+*Examples:*
+* `dart run :fluxter_controller profile` → `lib/features/profile/presentation/profile_controller.dart` (Simple controller)
+* `dart run :fluxter_controller earn_points --points --state` → `lib/features/points/presentation/earn_points_controller.dart` (With Freezed state)
+* `dart run :fluxter_controller payment --state --repository` → `lib/features/payment/presentation/payment_controller.dart` (With state + repository)
+
+*(If run without flags, the tool provides an interactive prompt)*
+
+### 5. Translation Generator
 Add translation keys dynamically into localization files (`translation_keys.dart`, `en_us.dart`, and `id_id.dart`). You can run it interactively or pass arguments directly.
 
 *Interactive Mode:*
