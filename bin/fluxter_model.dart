@@ -27,12 +27,14 @@ Future<void> main(List<String> args) async {
     exit(1);
   }
 
-  // Parse --<feature> flag
+  // Parse flags
   String featureName = 'shared';
+  bool noBuild = false;
   for (final arg in args.skip(1)) {
-    if (arg.startsWith('--') && arg.length > 2) {
+    if (arg == '--no-build') {
+      noBuild = true;
+    } else if (arg.startsWith('--') && arg.length > 2) {
       featureName = arg.substring(2).toLowerCase();
-      break;
     }
   }
 
@@ -122,26 +124,27 @@ Future<void> main(List<String> args) async {
     '✅ Successfully created Freezed model "$className" at ${modelFile.path}',
   );
 
-  print('\n⏳ Running build_runner to generate code files...');
-  try {
-    final process = await Process.start('dart', [
-      'run',
-      'build_runner',
-      'build',
-    ], runInShell: true);
+  if (!noBuild) {
+    print('\n⏳ Running build_runner to generate code files...');
+    try {
+      final process = await Process.start('dart', [
+        'run',
+        'build_runner',
+        'build',
+      ], runInShell: true);
 
-    // Pipe stdout and stderr live to the terminal
-    await stdout.addStream(process.stdout);
-    await stderr.addStream(process.stderr);
+      await stdout.addStream(process.stdout);
+      await stderr.addStream(process.stderr);
 
-    final exitCode = await process.exitCode;
-    if (exitCode == 0) {
-      print('\n✅ Code generation completed successfully!');
-    } else {
-      print('\n❌ Code generation failed with exit code $exitCode');
+      final exitCode = await process.exitCode;
+      if (exitCode == 0) {
+        print('\n✅ Code generation completed successfully!');
+      } else {
+        print('\n❌ Code generation failed with exit code $exitCode');
+      }
+    } catch (e) {
+      print('\n❌ Failed to run build_runner: $e');
     }
-  } catch (e) {
-    print('\n❌ Failed to run build_runner: $e');
   }
 }
 

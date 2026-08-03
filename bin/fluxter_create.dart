@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-void main(List<String> args) {
+void main(List<String> args) async {
   String? overrideFeature;
   String? rawInput;
   bool? isStateful;
@@ -25,6 +25,8 @@ void main(List<String> args) {
         includeController = true;
       } else if (val == 'no-state') {
         includeState = false;
+      } else if (val == 'no-build') {
+        // handled below
       } else {
         overrideFeature = val;
       }
@@ -89,7 +91,9 @@ void main(List<String> args) {
       exit(1);
     }
   } else {
-    if (screenFile.existsSync() || controllerFile.existsSync()) {
+    final screenExists = screenFile.existsSync();
+    final controllerExists = includeController != false && controllerFile.existsSync();
+    if (screenExists || controllerExists) {
       print(
         '❌ Screen or Controller for "$featureName" already exists in feature "$overrideFeature".',
       );
@@ -188,10 +192,30 @@ void main(List<String> args) {
   print(
     '   1. Register your route for ${className}Screen in lib/app/router/app_router.dart',
   );
-  if (includeController) {
-    print(
-      '   2. Run: dart run build_runner build --delete-conflicting-outputs',
-    );
+
+  final noBuild = args.contains('--no-build');
+
+  if (includeController && !noBuild) {
+    print('\n⏳ Running build_runner to generate code files...');
+    try {
+      final process = await Process.start('dart', [
+        'run',
+        'build_runner',
+        'build',
+      ], runInShell: true);
+
+      await stdout.addStream(process.stdout);
+      await stderr.addStream(process.stderr);
+
+      final exitCode = await process.exitCode;
+      if (exitCode == 0) {
+        print('\n✅ Code generation completed successfully!');
+      } else {
+        print('\n❌ Code generation failed with exit code $exitCode');
+      }
+    } catch (e) {
+      print('\n❌ Failed to run build_runner: $e');
+    }
   }
 }
 

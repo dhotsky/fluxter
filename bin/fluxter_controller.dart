@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-void main(List<String> args) {
+void main(List<String> args) async {
   String? overrideFeature;
   String? rawInput;
   bool? includeState;
@@ -17,6 +17,8 @@ void main(List<String> args) {
         includeState = false;
       } else if (val == 'repository') {
         hasRepository = true;
+      } else if (val == 'no-build') {
+        // handled below
       } else {
         overrideFeature = val;
       }
@@ -46,9 +48,7 @@ void main(List<String> args) {
     print('Examples:');
     print('  dart run :fluxter_controller profile');
     print('  dart run :fluxter_controller earn_points --points --state');
-    print(
-      '  dart run :fluxter_controller payment --state --repository',
-    );
+    print('  dart run :fluxter_controller payment --state --repository');
     exit(1);
   }
 
@@ -138,8 +138,31 @@ void main(List<String> args) {
   print(
     '✅ Successfully created "${className}Controller" at ${controllerFile.path}',
   );
-  print('\n⚠️  Don\'t forget to run:');
-  print('   dart run build_runner build --delete-conflicting-outputs');
+
+  final noBuild = args.contains('--no-build');
+
+  if (!noBuild) {
+    print('\n⏳ Running build_runner to generate code files...');
+    try {
+      final process = await Process.start('dart', [
+        'run',
+        'build_runner',
+        'build',
+      ], runInShell: true);
+
+      await stdout.addStream(process.stdout);
+      await stderr.addStream(process.stderr);
+
+      final exitCode = await process.exitCode;
+      if (exitCode == 0) {
+        print('\n✅ Code generation completed successfully!');
+      } else {
+        print('\n❌ Code generation failed with exit code $exitCode');
+      }
+    } catch (e) {
+      print('\n❌ Failed to run build_runner: $e');
+    }
+  }
 }
 
 String _toSnakeCase(String text) {
@@ -181,7 +204,9 @@ String _getControllerTemplate(
 ) {
   final buffer = StringBuffer();
 
-  buffer.writeln("import 'package:riverpod_annotation/riverpod_annotation.dart';");
+  buffer.writeln(
+    "import 'package:riverpod_annotation/riverpod_annotation.dart';",
+  );
   if (hasRepository) {
     buffer.writeln(
       "import 'package:$projectName/features/$targetFeaturePath/data/${snake}_repository.dart';",
@@ -199,9 +224,7 @@ String _getControllerTemplate(
   buffer.writeln('  @override');
   buffer.writeln('  void build() {');
   if (hasRepository) {
-    buffer.writeln(
-      '    // ignore: unused_local_variable',
-    );
+    buffer.writeln('    // ignore: unused_local_variable');
     buffer.writeln(
       '    final repository = ref.watch(${camel}RepositoryProvider);',
     );
@@ -226,8 +249,12 @@ String _getControllerWithStateTemplate(
 ) {
   final buffer = StringBuffer();
 
-  buffer.writeln("import 'package:riverpod_annotation/riverpod_annotation.dart';");
-  buffer.writeln("import 'package:freezed_annotation/freezed_annotation.dart';");
+  buffer.writeln(
+    "import 'package:riverpod_annotation/riverpod_annotation.dart';",
+  );
+  buffer.writeln(
+    "import 'package:freezed_annotation/freezed_annotation.dart';",
+  );
   if (hasRepository) {
     buffer.writeln(
       "import 'package:$projectName/features/$targetFeaturePath/data/${snake}_repository.dart';",
@@ -258,9 +285,7 @@ String _getControllerWithStateTemplate(
   buffer.writeln('  @override');
   buffer.writeln('  ${pascal}State build() {');
   if (hasRepository) {
-    buffer.writeln(
-      '    // ignore: unused_local_variable',
-    );
+    buffer.writeln('    // ignore: unused_local_variable');
     buffer.writeln(
       '    final repository = ref.watch(${camel}RepositoryProvider);',
     );

@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-void main(List<String> args) {
+void main(List<String> args) async {
   if (args.isEmpty) {
     print('❌ Please provide a repository name.');
     print('Usage:');
@@ -55,10 +55,14 @@ void main(List<String> args) {
       hasApiService = true;
     } else if (arg == '--local-storage') {
       hasLocalStorage = true;
+    } else if (arg == '--no-build') {
+      // handled below
     } else if (arg.startsWith('--') && arg.length > 2) {
       featureName = arg.substring(2).toLowerCase();
     }
   }
+
+  final noBuild = args.contains('--no-build');
 
   final className = '${_snakeToPascal(repoName)}Repository';
   final camelName = '${_snakeToCamel(repoName)}Repository';
@@ -75,6 +79,9 @@ void main(List<String> args) {
   dir.createSync(recursive: true);
 
   final file = File('${dir.path}/$snakeName.dart');
+  final depth = featureName.split('/').length + 2;
+  final genPrefix = '../' * depth;
+
   file.writeAsStringSync(
     _getRepositoryTemplate(
       repoName,
@@ -83,10 +90,35 @@ void main(List<String> args) {
       hasApiService,
       hasLocalStorage,
       projectName,
+      genPrefix,
+      featureName,
     ),
   );
 
   print('✅ Successfully created repository "$className" at ${file.path}');
+
+  if (!noBuild) {
+    print('\n⏳ Running build_runner to generate code files...');
+    try {
+      final process = await Process.start('dart', [
+        'run',
+        'build_runner',
+        'build',
+      ], runInShell: true);
+
+      await stdout.addStream(process.stdout);
+      await stderr.addStream(process.stderr);
+
+      final exitCode = await process.exitCode;
+      if (exitCode == 0) {
+        print('\n✅ Code generation completed successfully!');
+      } else {
+        print('\n❌ Code generation failed with exit code $exitCode');
+      }
+    } catch (e) {
+      print('\n❌ Failed to run build_runner: $e');
+    }
+  }
 }
 
 String _toSnakeCase(String text) {
@@ -124,22 +156,31 @@ String _getRepositoryTemplate(
   bool apiService,
   bool localStorage,
   String projectName,
+  String genPrefix,
+  String featureName,
 ) {
   final buffer = StringBuffer();
 
   // Imports
-  buffer.writeln("import 'package:flutter_riverpod/flutter_riverpod.dart';");
-  buffer.writeln("import 'package:riverpod_annotation/riverpod_annotation.dart';");
+  buffer.writeln(
+    "import 'package:riverpod_annotation/riverpod_annotation.dart';",
+  );
   if (apiService) {
-    buffer.writeln("import 'package:$projectName/core/network/api_service.dart';");
+    buffer.writeln(
+      "import 'package:$projectName/core/network/api_service.dart';",
+    );
   }
   if (localStorage) {
-    buffer.writeln("import 'package:$projectName/core/storage/local_storage.dart';");
+    buffer.writeln(
+      "import 'package:$projectName/core/storage/local_storage.dart';",
+    );
   }
   buffer.writeln();
 
   // Part directive
-  buffer.writeln("part '${snake}_repository.g.dart';");
+  buffer.writeln(
+    "part '${genPrefix}gen/features/$featureName/data/${snake}_repository.g.dart';",
+  );
   buffer.writeln();
 
   // Class Definition
@@ -190,7 +231,6 @@ String _getRepositoryTemplate(
   return buffer.toString();
 }
 
-
 String? _getProjectName() {
   final pubspecFile = File('pubspec.yaml');
   if (!pubspecFile.existsSync()) return null;
@@ -198,7 +238,11 @@ String? _getProjectName() {
   for (final line in lines) {
     final trimmed = line.trim();
     if (trimmed.startsWith('name:')) {
-      return trimmed.substring(5).trim().replaceAll(RegExp(r"""['"]"""), '').trim();
+      return trimmed
+          .substring(5)
+          .trim()
+          .replaceAll(RegExp(r"""['"]"""), '')
+          .trim();
     }
   }
   return null;
