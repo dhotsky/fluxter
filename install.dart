@@ -821,10 +821,74 @@ void _stripLocalization(String projectName) {
       "",
     );
     content = content.replaceAll(
-      "TranslationKeys.processing.tr",
+      "context.tr.processing",
       "'Processing...'",
     );
     loadingFile.writeAsStringSync(content);
+  }
+
+  // 5. Modify lib/core/network/api_manager.dart
+  final apiManagerFile = File('lib/core/network/api_manager.dart');
+  if (apiManagerFile.existsSync()) {
+    var content = apiManagerFile.readAsStringSync().replaceAll('\r\n', '\n');
+    content = content.replaceAll(
+      "import 'package:$projectName/app/localization/translation_keys.dart';\n",
+      "",
+    );
+    content = content.replaceAll(
+      "import 'package:$projectName/app/localization/app_translations.dart';\n",
+      "",
+    );
+    content = content.replaceAll(
+      "AppTranslations.translate(TranslationKeys.errUnknown)",
+      "'Unknown error'",
+    );
+    content = content.replaceAll(
+      "AppTranslations.translate(TranslationKeys.errTimeout)",
+      "'Connection timeout'",
+    );
+    content = content.replaceAll(
+      "AppTranslations.translate(TranslationKeys.errBadRequest)",
+      "'Bad request'",
+    );
+    content = content.replaceAll(
+      "AppTranslations.translate(TranslationKeys.errUnauthorized)",
+      "'Unauthorized access'",
+    );
+    content = content.replaceAll(
+      "AppTranslations.translate(TranslationKeys.errNotFound)",
+      "'Resource not found'",
+    );
+    content = content.replaceAll(
+      "AppTranslations.translate(TranslationKeys.errServer)",
+      "'Internal server error'",
+    );
+    content = content.replaceAll(
+      "AppTranslations.translate(TranslationKeys.errNoInternet)",
+      "'No internet connection'",
+    );
+    apiManagerFile.writeAsStringSync(content);
+  }
+
+  // 6. Modify lib/app/utils/extensions/context_extension.dart
+  final contextExtFile = File('lib/app/utils/extensions/context_extension.dart');
+  if (contextExtFile.existsSync()) {
+    var content = contextExtFile.readAsStringSync().replaceAll('\r\n', '\n');
+    content = content.replaceAll(
+      "import 'package:$projectName/app/localization/translation_keys.dart';\n",
+      "",
+    );
+    content = content.replaceAll(
+      "import 'package:$projectName/app/localization/app_translations.dart';\n",
+      "",
+    );
+    // Remove the localization section at the end
+    content = content.replaceAll(
+      "  // ── Localization ────────────────────────────────────────────────────────\n"
+      "  AppTranslationsWrapper get tr => AppTranslationsWrapper(this);\n",
+      "",
+    );
+    contextExtFile.writeAsStringSync(content);
   }
 
   // 2. Modify lib/features/auth/presentation/login_screen.dart

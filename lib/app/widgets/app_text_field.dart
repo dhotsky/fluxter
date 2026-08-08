@@ -255,6 +255,10 @@ class _AppTextFieldState extends State<AppTextField> {
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: context.divider),
           ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: context.divider),
+          ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: context.divider),
