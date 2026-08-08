@@ -995,49 +995,7 @@ void _stripLocalization(String projectName) {
     homeFile.writeAsStringSync(content);
   }
 
-  // 4. Modify lib/core/network/api_manager.dart
-  final apiManagerFile = File('lib/core/network/api_manager.dart');
-  if (apiManagerFile.existsSync()) {
-    var content = apiManagerFile.readAsStringSync().replaceAll('\r\n', '\n');
-    content = content.replaceAll(
-      "import 'package:$projectName/app/localization/translation_keys.dart';\n",
-      "",
-    );
-    content = content.replaceAll(
-      "import 'package:$projectName/app/localization/app_translations.dart';\n",
-      "",
-    );
 
-    content = content.replaceAll(
-      "TranslationKeys.errTimeout.tr",
-      "'Connection timed out'",
-    );
-    content = content.replaceAll(
-      "TranslationKeys.errBadRequest.tr",
-      "'Bad request'",
-    );
-    content = content.replaceAll(
-      "TranslationKeys.errUnauthorized.tr",
-      "'Unauthorized'",
-    );
-    content = content.replaceAll(
-      "TranslationKeys.errNotFound.tr",
-      "'Not found'",
-    );
-    content = content.replaceAll(
-      "TranslationKeys.errServer.tr",
-      "'Server error'",
-    );
-    content = content.replaceAll(
-      "TranslationKeys.errUnknown.tr",
-      "'An unknown error occurred'",
-    );
-    content = content.replaceAll(
-      "TranslationKeys.errNoInternet.tr",
-      "'No internet connection'",
-    );
-    apiManagerFile.writeAsStringSync(content);
-  }
 }
 
 /// Remove all dark theme mode references to keep the app Light-only.
