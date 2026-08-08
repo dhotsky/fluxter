@@ -966,22 +966,22 @@ void _stripLocalization(String projectName) {
 
     // Update logout confirmation dialog
     content = content.replaceAll(
-      "TranslationKeys.logoutConfirmTitle.tr",
+      "context.tr.logoutConfirmTitle",
       "'Log Out'",
     );
     content = content.replaceAll(
-      "TranslationKeys.logoutConfirmMessage.tr",
+      "context.tr.logoutConfirmMessage",
       "'Are you sure you want to log out?'",
     );
-    content = content.replaceAll("TranslationKeys.cancel.tr", "'Cancel'");
+    content = content.replaceAll("context.tr.cancel", "'Cancel'");
 
     // Update homepage strings
-    content = content.replaceAll("TranslationKeys.home.tr", "'Home'");
+    content = content.replaceAll("context.tr.home", "'Home'");
     content = content.replaceAll(
-      "TranslationKeys.welcomeUser.trParams({'value': name})",
+      "context.tr.welcomeUser({'value': name})",
       "'Welcome, \$name'",
     );
-    content = content.replaceAll("TranslationKeys.logout.tr", "'Logout'");
+    content = content.replaceAll("context.tr.logout", "'Logout'");
     homeFile.writeAsStringSync(content);
   }
 }
