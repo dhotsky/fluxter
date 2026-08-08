@@ -965,10 +965,7 @@ void _stripLocalization(String projectName) {
     );
 
     // Update logout confirmation dialog
-    content = content.replaceAll(
-      "context.tr.logoutConfirmTitle",
-      "'Log Out'",
-    );
+    content = content.replaceAll("context.tr.logoutConfirmTitle", "'Log Out'");
     content = content.replaceAll(
       "context.tr.logoutConfirmMessage",
       "'Are you sure you want to log out?'",
