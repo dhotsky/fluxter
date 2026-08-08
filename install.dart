@@ -776,10 +776,7 @@ void _stripLocalization(String projectName) {
       "import 'package:$projectName/app/localization/app_translations.dart';\n",
       "",
     );
-    content = content.replaceAll(
-      "context.tr.understand",
-      "'I Understand'",
-    );
+    content = content.replaceAll("context.tr.understand", "'I Understand'");
     content = content.replaceAll("context.tr.yes", "'Yes'");
     content = content.replaceAll("context.tr.cancel", "'Cancel'");
     alertFile.writeAsStringSync(content);
@@ -797,10 +794,7 @@ void _stripLocalization(String projectName) {
       "import 'package:$projectName/app/localization/app_translations.dart';\n",
       "",
     );
-    content = content.replaceAll(
-      "context.tr.noDataFound",
-      "'No Data Found'",
-    );
+    content = content.replaceAll("context.tr.noDataFound", "'No Data Found'");
     content = content.replaceAll(
       "context.tr.noDataMessage",
       "'There is currently no data to display.'",
@@ -820,10 +814,7 @@ void _stripLocalization(String projectName) {
       "import 'package:$projectName/app/localization/app_translations.dart';\n",
       "",
     );
-    content = content.replaceAll(
-      "context.tr.processing",
-      "'Processing...'",
-    );
+    content = content.replaceAll("context.tr.processing", "'Processing...'");
     loadingFile.writeAsStringSync(content);
   }
 
@@ -871,7 +862,9 @@ void _stripLocalization(String projectName) {
   }
 
   // 6. Modify lib/app/utils/extensions/context_extension.dart
-  final contextExtFile = File('lib/app/utils/extensions/context_extension.dart');
+  final contextExtFile = File(
+    'lib/app/utils/extensions/context_extension.dart',
+  );
   if (contextExtFile.existsSync()) {
     var content = contextExtFile.readAsStringSync().replaceAll('\r\n', '\n');
     content = content.replaceAll(
@@ -885,7 +878,7 @@ void _stripLocalization(String projectName) {
     // Remove the localization section at the end
     content = content.replaceAll(
       "  // ── Localization ────────────────────────────────────────────────────────\n"
-      "  AppTranslationsWrapper get tr => AppTranslationsWrapper(this);\n",
+          "  AppTranslationsWrapper get tr => AppTranslationsWrapper(this);\n",
       "",
     );
     contextExtFile.writeAsStringSync(content);
@@ -931,10 +924,7 @@ void _stripLocalization(String projectName) {
       "'Please log in to continue'",
     );
     content = content.replaceAll("context.tr.email", "'Email'");
-    content = content.replaceAll(
-      "context.tr.enterEmail",
-      "'Enter your email'",
-    );
+    content = content.replaceAll("context.tr.enterEmail", "'Enter your email'");
     content = content.replaceAll("context.tr.password", "'Password'");
     content = content.replaceAll(
       "context.tr.enterPassword",
@@ -994,8 +984,6 @@ void _stripLocalization(String projectName) {
     content = content.replaceAll("TranslationKeys.logout.tr", "'Logout'");
     homeFile.writeAsStringSync(content);
   }
-
-
 }
 
 /// Remove all dark theme mode references to keep the app Light-only.
