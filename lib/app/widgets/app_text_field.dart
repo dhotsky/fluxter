@@ -1,7 +1,6 @@
 import 'package:fluxter/app/widgets/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:fluxter/app/theme/app_color.dart';
-import 'package:fluxter/app/utils/extensions/extensions.dart';
 import 'package:fluxter/app/widgets/app_button.dart';
 
 enum AppTextFieldVariant { outlined, underline, basic, floating }
