@@ -1,3 +1,4 @@
+import 'package:fluxter/app/widgets/app_spacing.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fluxter/app/theme/app_color.dart';
@@ -76,7 +77,7 @@ class AppAlert {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                8.height,
+                Spacing(8),
                 Flexible(
                   child: SingleChildScrollView(
                     child: Text(
@@ -88,7 +89,7 @@ class AppAlert {
                     ),
                   ),
                 ),
-                24.height,
+                Spacing(24),
                 AppButton(
                   text: displayButtonText,
                   onPressed: () {
@@ -134,7 +135,7 @@ class AppAlert {
                   onPressed: () => Navigator.of(context).pop(false),
                 ),
               ),
-              12.width,
+              Spacing(12),
               Expanded(
                 child: isDanger
                     ? AppButton.danger(
@@ -191,7 +192,7 @@ class AppAlert {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                8.height,
+                Spacing(8),
                 Flexible(
                   child: SingleChildScrollView(
                     child: Text(
@@ -203,7 +204,7 @@ class AppAlert {
                     ),
                   ),
                 ),
-                24.height,
+                Spacing(24),
                 Row(
                   children: [
                     Expanded(
@@ -212,7 +213,7 @@ class AppAlert {
                         onPressed: () => Navigator.of(context).pop(false),
                       ),
                     ),
-                    16.width,
+                    Spacing(16),
                     Expanded(
                       child: isDanger
                           ? AppButton.danger(

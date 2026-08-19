@@ -1,3 +1,4 @@
+import 'package:fluxter/app/widgets/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:fluxter/app/theme/app_color.dart';
 import 'package:fluxter/app/utils/extensions/extensions.dart';
@@ -232,7 +233,7 @@ class _AppTextFieldState extends State<AppTextField> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          isCompact ? 2.height : 8.height,
+          isCompact ? Spacing(2) : Spacing(8),
           textFieldWidget,
         ],
       );

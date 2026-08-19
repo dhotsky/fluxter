@@ -1,3 +1,4 @@
+import 'package:fluxter/app/widgets/app_spacing.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fluxter/app/theme/app_color.dart';
@@ -38,7 +39,7 @@ class AppLoading extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         indicator,
-        16.height,
+        Spacing(16),
         Text(
           text!,
           style: TextStyle(color: context.textSecondary, fontSize: 14),
@@ -75,7 +76,7 @@ class AppLoadingOverlay {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const AppLoading(size: 32, strokeWidth: 3),
-                16.height,
+                Spacing(16),
                 Text(
                   displayText,
                   textAlign: TextAlign.center,
@@ -117,7 +118,7 @@ class AppLoadingOverlay {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const AppLoading(size: 32, strokeWidth: 3),
-                16.height,
+                Spacing(16),
                 Text(
                   displayText,
                   textAlign: TextAlign.center,

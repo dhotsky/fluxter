@@ -102,7 +102,6 @@ lib/
 │   │   │   ├── extensions.dart        # Barrel export for all extensions
 │   │   │   ├── context_extension.dart # Theme, ColorScheme & MediaQuery shortcuts
 │   │   │   ├── date_time_extension.dart # DateTime & String date formatting
-│   │   │   ├── num_extension.dart     # Spacing helpers (e.g. 16.height, 8.width)
 │   │   │   ├── string_extension.dart  # Validation & manipulation helpers
 │   │   │   └── widget_extension.dart  # Alignment, scroll, padding & margin wrappers
 │   │   └── helpers/
@@ -118,6 +117,7 @@ lib/
 │       ├── app_ink_well.dart          # Container with material ripple feedback
 │       ├── app_list_view.dart         # ListView with refresh, pagination & empty state
 │       ├── app_loading.dart           # Loading indicator + overlay (dialog/bottom sheet)
+│       ├── app_spacing.dart           # Smart spacing widget for flex layouts
 │       └── app_text_field.dart        # Multi-variant text field with password toggle
 │
 ├── core/                              # Shared foundation
@@ -530,6 +530,21 @@ AppInkWell(
 
 ---
 
+#### Spacing
+A smart widget that automatically provides spacing (gap) between widgets in a flex container (Row, Column). It determines whether to apply width or height based on its parent's layout direction.
+
+```dart
+Column(
+  children: [
+    Text('Hello'),
+    Spacing(16), // Automatically becomes height: 16
+    Text('World'),
+  ],
+)
+```
+
+---
+
 #### AppEmpty
 A reusable empty state placeholder widget with customizable title, message, icon, and optional action button.
 
@@ -580,11 +595,6 @@ context.height         // Screen height
 context.padding        // Safe area padding
 ```
 
-#### NumExtension (`num`)
-```dart
-16.height              // SizedBox(height: 16)
-8.width                // SizedBox(width: 8)
-```
 
 #### StringExtension (`String`)
 ```dart

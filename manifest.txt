@@ -11,7 +11,6 @@ lib/app/theme/app_theme.dart
 lib/app/utils/extensions/context_extension.dart
 lib/app/utils/extensions/date_time_extension.dart
 lib/app/utils/extensions/extensions.dart
-lib/app/utils/extensions/num_extension.dart
 lib/app/utils/extensions/string_extension.dart
 lib/app/utils/extensions/widget_extension.dart
 lib/app/utils/helpers/locale_helper.dart
@@ -25,6 +24,7 @@ lib/app/widgets/app_image.dart
 lib/app/widgets/app_ink_well.dart
 lib/app/widgets/app_list_view.dart
 lib/app/widgets/app_loading.dart
+lib/app/widgets/app_spacing.dart
 lib/app/widgets/app_text_field.dart
 lib/core/chucker/chucker.dart
 lib/core/chucker/chucker_detail_screen.dart

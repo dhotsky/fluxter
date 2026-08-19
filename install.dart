@@ -211,6 +211,7 @@ Future<void> main(List<String> args) async {
   final extraFiles = [
     'README.md',
     'build.yaml',
+    'bin/fluxter_controller.dart',
     'bin/fluxter_create.dart',
     'bin/fluxter_model.dart',
     'bin/fluxter_repository.dart',

@@ -7,6 +7,7 @@ import 'package:fluxter/app/utils/helpers/theme_helper.dart';
 import 'package:fluxter/app/widgets/app_alert.dart';
 import 'package:fluxter/app/widgets/app_button.dart';
 import 'package:fluxter/app/utils/helpers/locale_helper.dart';
+import 'package:fluxter/app/widgets/app_spacing.dart';
 import 'package:fluxter/features/auth/presentation/auth_controller.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -51,7 +52,7 @@ class HomeScreen extends ConsumerWidget {
             onPressed: () => ref.read(themeModeProvider.notifier).toggleTheme(),
             child: const Icon(Icons.brightness_6),
           ),
-          8.width,
+          Spacing(8),
         ],
       ),
       body: SafeArea(
@@ -66,7 +67,7 @@ class HomeScreen extends ConsumerWidget {
                 color: context.textPrimary,
               ),
             ),
-            32.height,
+            Spacing(32),
             AppButton(
               width: double.infinity,
               text: context.tr.logout,

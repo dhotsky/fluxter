@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxter/app/theme/app_color.dart';
 import 'package:fluxter/app/utils/extensions/extensions.dart';
 import 'package:fluxter/app/widgets/app_button.dart';
+import 'package:fluxter/app/widgets/app_spacing.dart';
 import 'package:fluxter/app/widgets/app_text_field.dart';
 import 'package:fluxter/app/utils/helpers/snackbar_helper.dart';
 import 'package:fluxter/app/utils/helpers/locale_helper.dart';
@@ -86,7 +87,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           letterSpacing: -0.5,
                         ),
                       ),
-                      4.height,
+                      Spacing(4),
                       const Text(
                         'Scalable Flutter Architecture',
                         style: TextStyle(color: Colors.white70, fontSize: 14),
@@ -120,7 +121,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      8.height,
+                      Spacing(8),
                       Text(
                         context.tr.welcome,
                         style: TextStyle(
@@ -129,7 +130,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      4.height,
+                      Spacing(4),
                       Text(
                         context.tr.pleaseLogin,
                         style: TextStyle(
@@ -137,7 +138,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           fontSize: 14,
                         ),
                       ),
-                      32.height,
+                      Spacing(32),
 
                       // ── Email Field ──
                       AppTextField.outlined(
@@ -148,7 +149,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         hintText: context.tr.enterEmail,
                         prefixIcon: const Icon(Icons.email_outlined),
                       ),
-                      20.height,
+                      Spacing(20),
 
                       // ── Password Field ──
                       AppTextField.outlined(
@@ -159,7 +160,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         hintText: context.tr.enterPassword,
                         prefixIcon: const Icon(Icons.lock_outlined),
                       ),
-                      32.height,
+                      Spacing(32),
 
                       // ── Login Button ──
                       AppButton(

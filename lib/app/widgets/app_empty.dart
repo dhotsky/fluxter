@@ -1,3 +1,4 @@
+import 'package:fluxter/app/widgets/app_spacing.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fluxter/app/theme/app_color.dart';
@@ -37,7 +38,7 @@ class AppEmpty extends StatelessWidget {
           ),
           child: Icon(icon, size: 64, color: AppColor.primary),
         ),
-        24.height,
+        Spacing(24),
         Text(
           displayTitle,
           textAlign: TextAlign.center,
@@ -47,13 +48,13 @@ class AppEmpty extends StatelessWidget {
             color: context.textPrimary,
           ),
         ),
-        8.height,
+        Spacing(8),
         Text(
           displayMessage,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: context.textSecondary),
         ),
-        if (action != null) ...[24.height, action!],
+        if (action != null) ...[Spacing(24), action!],
       ],
     ).paddingAll(32.0).center;
   }
